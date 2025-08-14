@@ -3,21 +3,36 @@
   "version": "1.0.0",
   "description": "QuantumFlow by eliomatters - Quantum-inspired compression algorithm",
   "main": "dist/index.js",
+  "bin": {
+    "quantumflow": "dist/cli/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "test": "jest",
     "test:watch": "jest --watch",
-    "dev": "ts-node src/index.ts"
+    "test:performance": "node src/__tests__/run-performance-tests.js --quick",
+    "test:performance:full": "node src/__tests__/run-performance-tests.js --full",
+    "test:performance:large": "node src/__tests__/run-performance-tests.js --large-only",
+    "dev": "ts-node src/index.ts",
+    "cli": "ts-node src/cli/index.ts"
   },
-  "keywords": ["compression", "quantum", "algorithm"],
+  "keywords": [
+    "compression",
+    "quantum",
+    "algorithm"
+  ],
   "author": "eliomatters",
   "license": "MIT",
   "devDependencies": {
+    "@types/commander": "^2.12.0",
     "@types/jest": "^29.5.0",
     "@types/node": "^20.0.0",
     "jest": "^29.5.0",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.0",
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "commander": "^14.0.0"
   }
 }

@@ -91,8 +91,8 @@ describe('QuantumConfig', () => {
     test('should validate entanglement level setter', () => {
       const config = new QuantumConfig();
       
-      config.maxEntanglementLevel = 6;
-      expect(config.maxEntanglementLevel).toBe(6);
+      config.maxEntanglementLevel = 3; // Valid for 8-bit depth (max 4)
+      expect(config.maxEntanglementLevel).toBe(3);
       
       expect(() => config.maxEntanglementLevel = 0).toThrow('Maximum entanglement level must be between 1 and 8');
       expect(() => config.maxEntanglementLevel = 9).toThrow('Maximum entanglement level must be between 1 and 8');
@@ -122,16 +122,17 @@ describe('QuantumConfig', () => {
     });
 
     test('should validate parameter combinations when setting properties', () => {
-      const config = new QuantumConfig(8, 3, 5, 0.5);
+      // Test entanglement level validation
+      const config1 = new QuantumConfig(8, 3, 5, 0.5);
+      expect(() => config1.maxEntanglementLevel = 5).toThrow('Maximum entanglement level (5) should not exceed half the quantum bit depth (4 for 8 bits)');
       
-      // Setting entanglement level too high should trigger combination validation
-      expect(() => config.maxEntanglementLevel = 8).toThrow('Maximum entanglement level (8) should not exceed half the quantum bit depth (4 for 8 bits)');
+      // Test superposition complexity validation
+      const config2 = new QuantumConfig(8, 2, 5, 0.5);
+      expect(() => config2.superpositionComplexity = 9).toThrow('Superposition complexity (9) should not exceed quantum bit depth (8)');
       
-      // Setting superposition complexity too high should trigger combination validation
-      expect(() => config.superpositionComplexity = 9).toThrow('Superposition complexity (9) should not exceed quantum bit depth (8)');
-      
-      // Setting bit depth too low should trigger combination validation
-      expect(() => config.quantumBitDepth = 4).toThrow('Maximum entanglement level (3) should not exceed half the quantum bit depth (2 for 4 bits)');
+      // Test bit depth validation - use a fresh config
+      const config3 = new QuantumConfig(8, 3, 5, 0.5);
+      expect(() => config3.quantumBitDepth = 4).toThrow('Maximum entanglement level (3) should not exceed half the quantum bit depth (2 for 4 bits)');
     });
   });
 
@@ -277,6 +278,8 @@ describe('QuantumConfig', () => {
       const optimized = config.optimizeForData(512, 'binary');
       
       expect(optimized.quantumBitDepth).toBeLessThanOrEqual(config.quantumBitDepth);
+      // Verify the optimized config is valid
+      expect(() => optimized.validateParameters()).not.toThrow();
     });
 
     test('should optimize for large files', () => {
@@ -453,13 +456,13 @@ describe('QuantumConfig', () => {
     });
 
     test('should generate string representation', () => {
-      const config = new QuantumConfig(10, 6, 7, 0.7, 'test');
+      const config = new QuantumConfig(10, 5, 7, 0.7, 'test'); // 5 is valid for 10 bits (max 5)
       const str = config.toString();
       
       expect(str).toContain('QuantumConfig');
       expect(str).toContain('test');
       expect(str).toContain('bits=10');
-      expect(str).toContain('entanglement=6');
+      expect(str).toContain('entanglement=5');
       expect(str).toContain('complexity=7');
       expect(str).toContain('threshold=0.7');
     });

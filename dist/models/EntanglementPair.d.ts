@@ -79,6 +79,14 @@ export declare class EntanglementPair {
      */
     getCompressionBenefit(): number;
     /**
+     * Extract detailed shared information with pattern analysis
+     */
+    extractDetailedSharedInformation(): DetailedSharedInfo;
+    /**
+     * Calculate advanced correlation strength with multiple metrics
+     */
+    calculateAdvancedCorrelationStrength(): AdvancedCorrelationStrength;
+    /**
      * Check if this entanglement pair is equivalent to another
      */
     equals(other: EntanglementPair, tolerance?: number): boolean;
@@ -106,5 +114,46 @@ export declare class EntanglementPair {
      * Validate the entanglement pair
      */
     private validateEntanglement;
+    /**
+     * Calculate compression potential based on patterns and shared bytes
+     */
+    private calculateCompressionPotential;
+    /**
+     * Calculate ranks for Spearman correlation
+     */
+    private calculateRanks;
+}
+/**
+ * I
+nterface for detailed shared information analysis
+ */
+export interface DetailedSharedInfo {
+    exactMatches: number[];
+    similarBytes: Array<{
+        index: number;
+        valueA: number;
+        valueB: number;
+        similarity: number;
+    }>;
+    patterns: Array<{
+        start: number;
+        length: number;
+        similarity: number;
+    }>;
+    totalSharedBytes: number;
+    sharedRatio: number;
+    averagePatternSimilarity: number;
+    compressionPotential: number;
+}
+/**
+ * Interface for advanced correlation strength metrics
+ */
+export interface AdvancedCorrelationStrength {
+    pearsonCorrelation: number;
+    spearmanCorrelation: number;
+    mutualInformation: number;
+    normalizedMutualInformation: number;
+    structuralSimilarity: number;
+    overallStrength: number;
 }
 //# sourceMappingURL=EntanglementPair.d.ts.map

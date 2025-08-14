@@ -169,6 +169,164 @@ class EntanglementPair {
         return mutualInfo * sharedInfoSize * this._correlationStrength;
     }
     /**
+     * Extract detailed shared information with pattern analysis
+     */
+    extractDetailedSharedInformation() {
+        const bytesA = this._stateA.toBytes();
+        const bytesB = this._stateB.toBytes();
+        const minLength = Math.min(bytesA.length, bytesB.length);
+        const exactMatches = [];
+        const similarBytes = [];
+        const patterns = [];
+        // Find exact matches and similar bytes
+        for (let i = 0; i < minLength; i++) {
+            if (bytesA[i] === bytesB[i]) {
+                exactMatches.push(i);
+            }
+            else {
+                const similarity = 1 - Math.abs(bytesA[i] - bytesB[i]) / 255;
+                if (similarity > 0.5) {
+                    similarBytes.push({
+                        index: i,
+                        valueA: bytesA[i],
+                        valueB: bytesB[i],
+                        similarity
+                    });
+                }
+            }
+        }
+        // Find continuous patterns
+        let patternStart = -1;
+        let patternLength = 0;
+        let patternSimilarity = 0;
+        for (let i = 0; i < minLength; i++) {
+            const similarity = 1 - Math.abs(bytesA[i] - bytesB[i]) / 255;
+            if (similarity > 0.7) {
+                if (patternStart === -1) {
+                    patternStart = i;
+                    patternLength = 1;
+                    patternSimilarity = similarity;
+                }
+                else {
+                    patternLength++;
+                    patternSimilarity = (patternSimilarity * (patternLength - 1) + similarity) / patternLength;
+                }
+            }
+            else {
+                if (patternStart !== -1 && patternLength >= 2) {
+                    patterns.push({
+                        start: patternStart,
+                        length: patternLength,
+                        similarity: patternSimilarity
+                    });
+                }
+                patternStart = -1;
+                patternLength = 0;
+                patternSimilarity = 0;
+            }
+        }
+        // Add final pattern if exists
+        if (patternStart !== -1 && patternLength >= 2) {
+            patterns.push({
+                start: patternStart,
+                length: patternLength,
+                similarity: patternSimilarity
+            });
+        }
+        // Calculate information metrics
+        const totalSharedBytes = exactMatches.length + similarBytes.length;
+        const sharedRatio = minLength > 0 ? totalSharedBytes / minLength : 0;
+        const averagePatternSimilarity = patterns.length > 0
+            ? patterns.reduce((sum, p) => sum + p.similarity, 0) / patterns.length
+            : 0;
+        return {
+            exactMatches,
+            similarBytes,
+            patterns,
+            totalSharedBytes,
+            sharedRatio,
+            averagePatternSimilarity,
+            compressionPotential: this.calculateCompressionPotential(patterns, totalSharedBytes)
+        };
+    }
+    /**
+     * Calculate advanced correlation strength with multiple metrics
+     */
+    calculateAdvancedCorrelationStrength() {
+        const bytesA = this._stateA.toBytes();
+        const bytesB = this._stateB.toBytes();
+        const minLength = Math.min(bytesA.length, bytesB.length);
+        if (minLength === 0) {
+            return {
+                pearsonCorrelation: 0,
+                spearmanCorrelation: 0,
+                mutualInformation: 0,
+                normalizedMutualInformation: 0,
+                structuralSimilarity: 0,
+                overallStrength: 0
+            };
+        }
+        // Pearson correlation coefficient
+        const meanA = bytesA.slice(0, minLength).reduce((sum, b) => sum + b, 0) / minLength;
+        const meanB = bytesB.slice(0, minLength).reduce((sum, b) => sum + b, 0) / minLength;
+        let numerator = 0;
+        let denomA = 0;
+        let denomB = 0;
+        for (let i = 0; i < minLength; i++) {
+            const diffA = bytesA[i] - meanA;
+            const diffB = bytesB[i] - meanB;
+            numerator += diffA * diffB;
+            denomA += diffA * diffA;
+            denomB += diffB * diffB;
+        }
+        const pearsonCorrelation = (denomA * denomB > 0)
+            ? numerator / Math.sqrt(denomA * denomB)
+            : 0;
+        // Spearman rank correlation (simplified)
+        const ranksA = this.calculateRanks(Array.from(bytesA.slice(0, minLength)));
+        const ranksB = this.calculateRanks(Array.from(bytesB.slice(0, minLength)));
+        const meanRankA = ranksA.reduce((sum, r) => sum + r, 0) / ranksA.length;
+        const meanRankB = ranksB.reduce((sum, r) => sum + r, 0) / ranksB.length;
+        let spearmanNum = 0;
+        let spearmanDenomA = 0;
+        let spearmanDenomB = 0;
+        for (let i = 0; i < ranksA.length; i++) {
+            const diffA = ranksA[i] - meanRankA;
+            const diffB = ranksB[i] - meanRankB;
+            spearmanNum += diffA * diffB;
+            spearmanDenomA += diffA * diffA;
+            spearmanDenomB += diffB * diffB;
+        }
+        const spearmanCorrelation = (spearmanDenomA * spearmanDenomB > 0)
+            ? spearmanNum / Math.sqrt(spearmanDenomA * spearmanDenomB)
+            : 0;
+        // Mutual information (already calculated)
+        const mutualInformation = this.calculateMutualInformation();
+        // Normalized mutual information
+        const probsA = this._stateA.getProbabilityDistribution();
+        const probsB = this._stateB.getProbabilityDistribution();
+        const entropyA = QuantumMath_1.QuantumMath.calculateEntropy(probsA);
+        const entropyB = QuantumMath_1.QuantumMath.calculateEntropy(probsB);
+        const maxEntropy = Math.max(entropyA, entropyB);
+        const normalizedMutualInformation = maxEntropy > 0 ? Math.min(mutualInformation / maxEntropy, 1.0) : 0;
+        // Structural similarity (based on patterns)
+        const detailedInfo = this.extractDetailedSharedInformation();
+        const structuralSimilarity = detailedInfo.averagePatternSimilarity;
+        // Overall strength (weighted combination)
+        const overallStrength = (0.3 * Math.abs(pearsonCorrelation) +
+            0.2 * Math.abs(spearmanCorrelation) +
+            0.2 * normalizedMutualInformation +
+            0.3 * structuralSimilarity);
+        return {
+            pearsonCorrelation,
+            spearmanCorrelation,
+            mutualInformation,
+            normalizedMutualInformation,
+            structuralSimilarity,
+            overallStrength: Math.min(overallStrength, 1.0)
+        };
+    }
+    /**
      * Check if this entanglement pair is equivalent to another
      */
     equals(other, tolerance = 1e-10) {
@@ -233,6 +391,36 @@ class EntanglementPair {
         if (this._correlationStrength < 0.1) {
             throw new Error('States must have minimum correlation to form entanglement');
         }
+    }
+    /**
+     * Calculate compression potential based on patterns and shared bytes
+     */
+    calculateCompressionPotential(patterns, totalSharedBytes) {
+        if (patterns.length === 0)
+            return 0;
+        // Calculate potential savings from patterns
+        let potentialSavings = 0;
+        for (const pattern of patterns) {
+            // Savings = pattern_length * similarity * correlation_strength
+            potentialSavings += pattern.length * pattern.similarity * this._correlationStrength;
+        }
+        // Add savings from shared bytes
+        potentialSavings += totalSharedBytes * this._correlationStrength;
+        // Normalize by total data size
+        const totalSize = Math.max(this._stateA.toBytes().length, this._stateB.toBytes().length);
+        return totalSize > 0 ? Math.min(potentialSavings / totalSize, 1.0) : 0;
+    }
+    /**
+     * Calculate ranks for Spearman correlation
+     */
+    calculateRanks(values) {
+        const indexed = values.map((value, index) => ({ value, index }));
+        indexed.sort((a, b) => a.value - b.value);
+        const ranks = new Array(values.length);
+        for (let i = 0; i < indexed.length; i++) {
+            ranks[indexed[i].index] = i + 1;
+        }
+        return ranks;
     }
 }
 exports.EntanglementPair = EntanglementPair;

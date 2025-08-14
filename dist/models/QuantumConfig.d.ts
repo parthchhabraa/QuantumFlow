@@ -98,6 +98,63 @@ export declare class QuantumConfig {
      */
     validateParameters(): void;
     /**
+     * Validate quantum bit depth parameter
+     */
+    static validateQuantumBitDepth(value: number): void;
+    /**
+     * Validate entanglement level parameter
+     */
+    static validateEntanglementLevel(value: number): void;
+    /**
+     * Validate superposition complexity parameter
+     */
+    static validateSuperpositionComplexity(value: number): void;
+    /**
+     * Validate interference threshold parameter
+     */
+    static validateInterferenceThreshold(value: number): void;
+    /**
+     * Validate parameter combination for computational feasibility
+     */
+    validateParameterCombination(): void;
+    /**
+     * Calculate computational complexity score for parameter validation
+     */
+    calculateComputationalComplexity(): number;
+    /**
+     * Validate a complete configuration object
+     */
+    static validateConfiguration(config: Partial<QuantumConfigData>): string[];
+    /**
+     * Check if configuration is valid without throwing errors
+     */
+    static isValidConfiguration(config: Partial<QuantumConfigData>): boolean;
+    /**
+     * Get suggested parameter ranges for optimization
+     */
+    static getParameterRanges(): {
+        quantumBitDepth: {
+            min: number;
+            max: number;
+            recommended: number[];
+        };
+        maxEntanglementLevel: {
+            min: number;
+            max: number;
+            recommended: number[];
+        };
+        superpositionComplexity: {
+            min: number;
+            max: number;
+            recommended: number[];
+        };
+        interferenceThreshold: {
+            min: number;
+            max: number;
+            recommended: number[];
+        };
+    };
+    /**
      * Convert configuration to JSON string
      */
     toJSON(): string;

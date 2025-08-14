@@ -24,10 +24,9 @@ class QuantumConfig {
      * Set quantum bit depth with validation
      */
     set quantumBitDepth(value) {
-        if (value < 2 || value > 16) {
-            throw new Error('Quantum bit depth must be between 2 and 16');
-        }
+        QuantumConfig.validateQuantumBitDepth(value);
         this._quantumBitDepth = value;
+        this.validateParameterCombination();
     }
     /**
      * Get maximum entanglement level (1-8 levels)
@@ -39,10 +38,9 @@ class QuantumConfig {
      * Set maximum entanglement level with validation
      */
     set maxEntanglementLevel(value) {
-        if (value < 1 || value > 8) {
-            throw new Error('Maximum entanglement level must be between 1 and 8');
-        }
+        QuantumConfig.validateEntanglementLevel(value);
         this._maxEntanglementLevel = value;
+        this.validateParameterCombination();
     }
     /**
      * Get superposition complexity (1-10 complexity)
@@ -54,10 +52,9 @@ class QuantumConfig {
      * Set superposition complexity with validation
      */
     set superpositionComplexity(value) {
-        if (value < 1 || value > 10) {
-            throw new Error('Superposition complexity must be between 1 and 10');
-        }
+        QuantumConfig.validateSuperpositionComplexity(value);
         this._superpositionComplexity = value;
+        this.validateParameterCombination();
     }
     /**
      * Get interference threshold (0.1-0.9)
@@ -69,9 +66,7 @@ class QuantumConfig {
      * Set interference threshold with validation
      */
     set interferenceThreshold(value) {
-        if (value < 0.1 || value > 0.9) {
-            throw new Error('Interference threshold must be between 0.1 and 0.9');
-        }
+        QuantumConfig.validateInterferenceThreshold(value);
         this._interferenceThreshold = value;
     }
     /**
@@ -96,19 +91,19 @@ class QuantumConfig {
      * Create default configuration for binary data compression
      */
     static forBinaryCompression() {
-        return new QuantumConfig(8, 5, 6, 0.6, 'binary-optimized');
+        return new QuantumConfig(8, 4, 6, 0.6, 'binary-optimized');
     }
     /**
      * Create default configuration for image compression
      */
     static forImageCompression() {
-        return new QuantumConfig(10, 6, 7, 0.7, 'image-optimized');
+        return new QuantumConfig(10, 5, 7, 0.7, 'image-optimized');
     }
     /**
      * Create high-performance configuration (more resource intensive)
      */
     static forHighPerformance() {
-        return new QuantumConfig(12, 8, 9, 0.8, 'high-performance');
+        return new QuantumConfig(12, 6, 8, 0.8, 'high-performance');
     }
     /**
      * Create low-resource configuration (faster but less compression)
@@ -181,14 +176,19 @@ class QuantumConfig {
             default:
                 optimized = new QuantumConfig();
         }
-        // Adjust based on data size
+        // Adjust based on data size while respecting validation constraints
         if (dataSize < 1024) { // Small files
-            optimized.quantumBitDepth = Math.max(4, optimized.quantumBitDepth - 2);
-            optimized.superpositionComplexity = Math.max(2, optimized.superpositionComplexity - 1);
+            const newBitDepth = Math.max(4, optimized.quantumBitDepth - 2);
+            const newComplexity = Math.max(2, optimized.superpositionComplexity - 1);
+            // Ensure entanglement level is compatible with new bit depth
+            const maxEntanglement = Math.floor(newBitDepth / 2);
+            const adjustedEntanglement = Math.min(optimized.maxEntanglementLevel, maxEntanglement);
+            optimized = new QuantumConfig(newBitDepth, adjustedEntanglement, Math.min(newComplexity, newBitDepth), optimized.interferenceThreshold, optimized.profileName);
         }
         else if (dataSize > 1024 * 1024) { // Large files
-            optimized.quantumBitDepth = Math.min(12, optimized.quantumBitDepth + 2);
-            optimized.superpositionComplexity = Math.min(8, optimized.superpositionComplexity + 1);
+            const newBitDepth = Math.min(12, optimized.quantumBitDepth + 2);
+            const newComplexity = Math.min(8, optimized.superpositionComplexity + 1);
+            optimized = new QuantumConfig(newBitDepth, optimized.maxEntanglementLevel, Math.min(newComplexity, newBitDepth), optimized.interferenceThreshold, optimized.profileName);
         }
         return optimized;
     }
@@ -196,18 +196,171 @@ class QuantumConfig {
      * Validate all parameters are within acceptable bounds
      */
     validateParameters() {
-        if (this._quantumBitDepth < 2 || this._quantumBitDepth > 16) {
+        QuantumConfig.validateQuantumBitDepth(this._quantumBitDepth);
+        QuantumConfig.validateEntanglementLevel(this._maxEntanglementLevel);
+        QuantumConfig.validateSuperpositionComplexity(this._superpositionComplexity);
+        QuantumConfig.validateInterferenceThreshold(this._interferenceThreshold);
+        this.validateParameterCombination();
+    }
+    /**
+     * Validate quantum bit depth parameter
+     */
+    static validateQuantumBitDepth(value) {
+        if (!Number.isInteger(value)) {
+            throw new Error('Quantum bit depth must be an integer');
+        }
+        if (value < 2 || value > 16) {
             throw new Error('Quantum bit depth must be between 2 and 16');
         }
-        if (this._maxEntanglementLevel < 1 || this._maxEntanglementLevel > 8) {
+    }
+    /**
+     * Validate entanglement level parameter
+     */
+    static validateEntanglementLevel(value) {
+        if (!Number.isInteger(value)) {
+            throw new Error('Maximum entanglement level must be an integer');
+        }
+        if (value < 1 || value > 8) {
             throw new Error('Maximum entanglement level must be between 1 and 8');
         }
-        if (this._superpositionComplexity < 1 || this._superpositionComplexity > 10) {
+    }
+    /**
+     * Validate superposition complexity parameter
+     */
+    static validateSuperpositionComplexity(value) {
+        if (!Number.isInteger(value)) {
+            throw new Error('Superposition complexity must be an integer');
+        }
+        if (value < 1 || value > 10) {
             throw new Error('Superposition complexity must be between 1 and 10');
         }
-        if (this._interferenceThreshold < 0.1 || this._interferenceThreshold > 0.9) {
+    }
+    /**
+     * Validate interference threshold parameter
+     */
+    static validateInterferenceThreshold(value) {
+        if (typeof value !== 'number' || isNaN(value)) {
+            throw new Error('Interference threshold must be a valid number');
+        }
+        if (value < 0.1 || value > 0.9) {
             throw new Error('Interference threshold must be between 0.1 and 0.9');
         }
+    }
+    /**
+     * Validate parameter combination for computational feasibility
+     */
+    validateParameterCombination() {
+        // Check if the combination would exceed reasonable computational bounds
+        const computationalComplexity = this.calculateComputationalComplexity();
+        if (computationalComplexity > 10000000) {
+            throw new Error('Parameter combination exceeds computational feasibility bounds. ' +
+                'Consider reducing quantum bit depth, entanglement level, or superposition complexity.');
+        }
+        // Validate that entanglement level doesn't exceed what's meaningful for the bit depth
+        const maxMeaningfulEntanglement = Math.floor(this._quantumBitDepth / 2);
+        if (this._maxEntanglementLevel > maxMeaningfulEntanglement) {
+            throw new Error(`Maximum entanglement level (${this._maxEntanglementLevel}) should not exceed ` +
+                `half the quantum bit depth (${maxMeaningfulEntanglement} for ${this._quantumBitDepth} bits)`);
+        }
+        // Validate superposition complexity relative to bit depth
+        if (this._superpositionComplexity > this._quantumBitDepth) {
+            throw new Error(`Superposition complexity (${this._superpositionComplexity}) should not exceed ` +
+                `quantum bit depth (${this._quantumBitDepth})`);
+        }
+    }
+    /**
+     * Calculate computational complexity score for parameter validation
+     */
+    calculateComputationalComplexity() {
+        // Exponential growth with bit depth, linear with other parameters
+        const bitDepthComplexity = Math.pow(2, this._quantumBitDepth);
+        const entanglementComplexity = this._maxEntanglementLevel * 10;
+        const superpositionComplexity = this._superpositionComplexity * 5;
+        return bitDepthComplexity * entanglementComplexity * superpositionComplexity;
+    }
+    /**
+     * Validate a complete configuration object
+     */
+    static validateConfiguration(config) {
+        const errors = [];
+        try {
+            if (config.quantumBitDepth !== undefined) {
+                QuantumConfig.validateQuantumBitDepth(config.quantumBitDepth);
+            }
+        }
+        catch (error) {
+            errors.push(`Quantum bit depth: ${error instanceof Error ? error.message : String(error)}`);
+        }
+        try {
+            if (config.maxEntanglementLevel !== undefined) {
+                QuantumConfig.validateEntanglementLevel(config.maxEntanglementLevel);
+            }
+        }
+        catch (error) {
+            errors.push(`Entanglement level: ${error instanceof Error ? error.message : String(error)}`);
+        }
+        try {
+            if (config.superpositionComplexity !== undefined) {
+                QuantumConfig.validateSuperpositionComplexity(config.superpositionComplexity);
+            }
+        }
+        catch (error) {
+            errors.push(`Superposition complexity: ${error instanceof Error ? error.message : String(error)}`);
+        }
+        try {
+            if (config.interferenceThreshold !== undefined) {
+                QuantumConfig.validateInterferenceThreshold(config.interferenceThreshold);
+            }
+        }
+        catch (error) {
+            errors.push(`Interference threshold: ${error instanceof Error ? error.message : String(error)}`);
+        }
+        // Validate combination if all required parameters are present
+        if (config.quantumBitDepth !== undefined &&
+            config.maxEntanglementLevel !== undefined &&
+            config.superpositionComplexity !== undefined) {
+            try {
+                const tempConfig = new QuantumConfig(config.quantumBitDepth, config.maxEntanglementLevel, config.superpositionComplexity, config.interferenceThreshold || 0.5);
+                // Constructor will call validateParameterCombination
+            }
+            catch (error) {
+                errors.push(`Parameter combination: ${error instanceof Error ? error.message : String(error)}`);
+            }
+        }
+        return errors;
+    }
+    /**
+     * Check if configuration is valid without throwing errors
+     */
+    static isValidConfiguration(config) {
+        return QuantumConfig.validateConfiguration(config).length === 0;
+    }
+    /**
+     * Get suggested parameter ranges for optimization
+     */
+    static getParameterRanges() {
+        return {
+            quantumBitDepth: {
+                min: 2,
+                max: 16,
+                recommended: [4, 6, 8, 10, 12]
+            },
+            maxEntanglementLevel: {
+                min: 1,
+                max: 8,
+                recommended: [2, 3, 4, 5, 6]
+            },
+            superpositionComplexity: {
+                min: 1,
+                max: 10,
+                recommended: [3, 4, 5, 6, 7]
+            },
+            interferenceThreshold: {
+                min: 0.1,
+                max: 0.9,
+                recommended: [0.3, 0.4, 0.5, 0.6, 0.7]
+            }
+        };
     }
     /**
      * Convert configuration to JSON string

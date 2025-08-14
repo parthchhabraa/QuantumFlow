@@ -223,13 +223,33 @@ export class QuantumConfig {
         optimized = new QuantumConfig();
     }
 
-    // Adjust based on data size
+    // Adjust based on data size while respecting validation constraints
     if (dataSize < 1024) { // Small files
-      optimized.quantumBitDepth = Math.max(4, optimized.quantumBitDepth - 2);
-      optimized.superpositionComplexity = Math.max(2, optimized.superpositionComplexity - 1);
+      const newBitDepth = Math.max(4, optimized.quantumBitDepth - 2);
+      const newComplexity = Math.max(2, optimized.superpositionComplexity - 1);
+      
+      // Ensure entanglement level is compatible with new bit depth
+      const maxEntanglement = Math.floor(newBitDepth / 2);
+      const adjustedEntanglement = Math.min(optimized.maxEntanglementLevel, maxEntanglement);
+      
+      optimized = new QuantumConfig(
+        newBitDepth,
+        adjustedEntanglement,
+        Math.min(newComplexity, newBitDepth),
+        optimized.interferenceThreshold,
+        optimized.profileName
+      );
     } else if (dataSize > 1024 * 1024) { // Large files
-      optimized.quantumBitDepth = Math.min(12, optimized.quantumBitDepth + 2);
-      optimized.superpositionComplexity = Math.min(8, optimized.superpositionComplexity + 1);
+      const newBitDepth = Math.min(12, optimized.quantumBitDepth + 2);
+      const newComplexity = Math.min(8, optimized.superpositionComplexity + 1);
+      
+      optimized = new QuantumConfig(
+        newBitDepth,
+        optimized.maxEntanglementLevel,
+        Math.min(newComplexity, newBitDepth),
+        optimized.interferenceThreshold,
+        optimized.profileName
+      );
     }
 
     return optimized;

@@ -61,8 +61,17 @@ export {
   CoherenceAnalysis 
 } from './core/ProbabilityAnalyzer';
 
+// Export CLI components
+export { QuantumFlowCLI } from './cli/QuantumFlowCLI';
+
 // Main entry point for CLI usage
 if (require.main === module) {
-    console.log('QuantumFlow by eliomatters - Quantum Compression Simulator');
-    console.log('Mathematical foundations initialized successfully!');
+    // Import and run CLI
+    import('./cli/index').then(({ QuantumFlowCLI }) => {
+        const cli = new QuantumFlowCLI();
+        return cli.run();
+    }).catch((error) => {
+        console.error('CLI Error:', error);
+        process.exit(1);
+    });
 }

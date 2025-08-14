@@ -15,4 +15,5 @@ export { DataChunker, ChunkingStrategy, DataChunk, ChunkingAnalysis } from './co
 export { SuperpositionProcessor, ParallelProcessingResult, ProcessingMetrics, DominantPattern, MeasurementResult, ProcessingEfficiency } from './core/SuperpositionProcessor';
 export { PatternRecognizer, RecognizedPattern, PatternPosition, ProbabilityAnalysis, DominantProbability, HighProbabilityState, InterferencePattern as PatternInterferencePattern, CompressionEfficiency, OptimizedPattern } from './core/PatternRecognizer';
 export { ProbabilityAnalyzer, DistributionAnalysis, DistributionStatistics, ProbabilityCalculation, SignificanceTestResults, CompressionPotentialEstimate, CoherenceAnalysis } from './core/ProbabilityAnalyzer';
+export { QuantumFlowCLI } from './cli/QuantumFlowCLI';
 //# sourceMappingURL=index.d.ts.map
