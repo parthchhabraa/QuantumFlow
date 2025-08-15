@@ -1,0 +1,276 @@
+/* DecompressionMetrics Component Styles */
+
+.decompressionMetrics {
+  margin-top: 2rem;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.metricCard {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.metricCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.metricIcon {
+  font-size: 2rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.integrityCard .metricIcon {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.speedCard .metricIcon {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.expansionCard .metricIcon {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.filesCard .metricIcon {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.metricContent {
+  flex: 1;
+}
+
+.metricValue {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+
+.metricLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 0.125rem;
+}
+
+.metricSublabel {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.detailedMetrics {
+  margin-bottom: 2rem;
+}
+
+.glassCard {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.cardIcon {
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.cardTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.cardSubtitle {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.metricsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.metricRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.metricItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.metricName {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.metricItemValue {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.quantumDetails {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quantumDetails h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+}
+
+.quantumStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.quantumStat {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.statIcon {
+  font-size: 1.2rem;
+}
+
+.statInfo {
+  flex: 1;
+}
+
+.statValue {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.recentOperations {
+  margin-bottom: 2rem;
+}
+
+.operationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.operationItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.operationItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.operationInfo {
+  flex: 1;
+}
+
+.operationName {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+
+.operationDetails {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.operationStatus {
+  display: flex;
+  align-items: center;
+}
+
+.statusIndicator {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.statusIndicator.success {
+  background: #10b981;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .metricsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .metricRow {
+    grid-template-columns: 1fr;
+  }
+
+  .quantumStats {
+    grid-template-columns: 1fr;
+  }
+}

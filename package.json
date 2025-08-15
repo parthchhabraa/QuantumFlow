@@ -1,38 +1,126 @@
 {
   "name": "quantumflow",
   "version": "1.0.0",
-  "description": "QuantumFlow by eliomatters - Quantum-inspired compression algorithm",
+  "description": "QuantumFlow by eliomatters - Quantum-inspired compression algorithm leveraging simulated quantum mechanics",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
-    "quantumflow": "dist/cli/index.js"
+    "quantumflow": "dist/cli/index.js",
+    "qf": "dist/cli/index.js"
   },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
   "scripts": {
-    "build": "tsc",
+    "build": "npm run clean && tsc && npm run make-executable",
+    "build:watch": "tsc --watch",
+    "clean": "rm -rf dist",
+    "make-executable": "chmod +x dist/cli/index.js",
+    "prepublishOnly": "npm run build && npm run test",
+    "prepack": "npm run build",
+    "postpack": "echo 'Package created successfully. Install with: npm install -g ./quantumflow-*.tgz'",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "test:performance": "node src/__tests__/run-performance-tests.js --quick",
     "test:performance:full": "node src/__tests__/run-performance-tests.js --full",
     "test:performance:large": "node src/__tests__/run-performance-tests.js --large-only",
     "dev": "ts-node src/index.ts",
-    "cli": "ts-node src/cli/index.ts"
+    "cli": "ts-node src/cli/index.ts",
+    "cli:dev": "npm run build && node dist/cli/index.js",
+    "start": "node dist/cli/index.js",
+    "package": "npm pack",
+    "install:global": "npm run build && npm install -g .",
+    "uninstall:global": "npm uninstall -g quantumflow",
+    "benchmark": "npm run build && node dist/cli/index.js benchmark",
+    "verify-install": "npm run build && node dist/cli/index.js --version && echo 'Installation verification successful'",
+    "verify-full": "scripts/verify-installation.sh",
+    "create-dist": "scripts/create-distribution.sh",
+    "release": "npm run create-dist",
+    "api:dev": "ts-node src/api/index.ts",
+    "api:start": "node dist/api/index.js",
+    "frontend:test": "jest --selectProjects jsdom",
+    "frontend:test:watch": "jest --selectProjects jsdom --watch",
+    "frontend:test:coverage": "jest --selectProjects jsdom --coverage"
   },
   "keywords": [
     "compression",
     "quantum",
-    "algorithm"
+    "algorithm",
+    "cli",
+    "quantum-computing",
+    "data-compression",
+    "superposition",
+    "entanglement",
+    "quantum-interference"
   ],
-  "author": "eliomatters",
+  "author": {
+    "name": "eliomatters",
+    "email": "contact@eliomatters.com"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eliomatters/quantumflow.git"
+  },
+  "bugs": {
+    "url": "https://github.com/eliomatters/quantumflow/issues"
+  },
+  "homepage": "https://github.com/eliomatters/quantumflow#readme",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ],
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.5.0",
+    "@types/bcryptjs": "^2.4.6",
     "@types/commander": "^2.12.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
     "@types/jest": "^29.5.0",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/multer": "^1.4.11",
     "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/supertest": "^2.0.16",
+    "@types/uuid": "^9.0.7",
+    "identity-obj-proxy": "^3.0.0",
     "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "commander": "^14.0.0"
+    "axios": "^1.6.0",
+    "bcryptjs": "^2.4.3",
+    "commander": "^14.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3",
+    "recharts": "^2.8.0",
+    "uuid": "^9.0.1"
   }
 }

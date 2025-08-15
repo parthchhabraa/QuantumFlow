@@ -8,6 +8,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { QuantumCompressionEngine } from '../core/QuantumCompressionEngine';
 import { QuantumConfig } from '../models/QuantumConfig';
+import { ErrorHandler, ErrorCategory, ErrorSeverity } from '../core/ErrorHandler';
+import { ProgressIndicator } from '../core/ProgressIndicator';
+import { ConfigurationValidator } from '../core/ConfigurationValidator';
 
 export interface CLIOptions {
   compress?: boolean;
@@ -63,39 +66,92 @@ export class QuantumFlowCLI {
   private setupCommands(): void {
     this.program
       .name('quantumflow')
-      .description('QuantumFlow by eliomatters - Quantum-inspired compression algorithm')
-      .version('1.0.0');
+      .description('QuantumFlow by eliomatters - Quantum-inspired compression algorithm\n\nLeverages quantum mechanical principles (superposition, entanglement, and quantum interference)\nsimulated on conventional computers to achieve superior compression ratios.')
+      .version('1.0.0')
+      .usage('[options] <files...>')
+      .addHelpText('before', '\nEXAMPLES:')
+      .addHelpText('before', '  quantumflow file.txt                    # Compress file.txt to file.txt.qf')
+      .addHelpText('before', '  quantumflow -d file.txt.qf              # Decompress file.txt.qf to file.txt')
+      .addHelpText('before', '  quantumflow -v -k *.txt                 # Compress all .txt files verbosely, keep originals')
+      .addHelpText('before', '  quantumflow --batch --progress *.log    # Batch compress with progress bar')
+      .addHelpText('before', '  quantumflow -t file.txt.qf              # Test integrity of compressed file')
+      .addHelpText('before', '  quantumflow --list file.txt.qf          # List compressed file information')
+      .addHelpText('before', '  quantumflow -r directory/               # Recursively compress directory')
+      .addHelpText('before', '  quantumflow --quantum-bit-depth 12 file.txt  # Use 12-qubit simulation')
+      .addHelpText('before', '  qf file.txt                             # Use short alias')
+      .addHelpText('after', '\nQUANTUM PARAMETERS:')
+      .addHelpText('after', '  --quantum-bit-depth: Controls quantum state complexity (2-16, default: 8)')
+      .addHelpText('after', '  --max-entanglement-level: Maximum entanglement depth (1-8, default: 4)')
+      .addHelpText('after', '  --superposition-complexity: Superposition processing complexity (1-10, default: 5)')
+      .addHelpText('after', '  --interference-threshold: Quantum interference threshold (0.1-0.9, default: 0.5)')
+      .addHelpText('after', '\nFILE FORMATS:')
+      .addHelpText('after', '  Input: Any binary file')
+      .addHelpText('after', '  Output: .qf (QuantumFlow compressed format)')
+      .addHelpText('after', '\nEXIT CODES:')
+      .addHelpText('after', '  0: Success')
+      .addHelpText('after', '  1: Error or complete failure')
+      .addHelpText('after', '  2: Partial success (some files failed in batch mode)')
+      .addHelpText('after', '\nALIASES:')
+      .addHelpText('after', '  qf: Short alias for quantumflow command')
+      .addHelpText('after', '\nCONFIGURATION:')
+      .addHelpText('after', '  Config files: ./quantumflow.config.json, ~/.quantumflow/config.json')
+      .addHelpText('after', '  Use --config <file> to specify custom configuration');
 
-    // Compression command (default behavior)
+    // Main command (default behavior)
     this.program
       .argument('[files...]', 'files to compress/decompress')
-      .option('-c, --compress', 'compress files (default)')
-      .option('-d, --decompress', 'decompress files')
-      .option('-o, --output <file>', 'output file name')
-      .option('-v, --verbose', 'verbose output')
-      .option('-f, --force', 'force overwrite existing files')
-      .option('-k, --keep', 'keep input files after processing')
-      .option('-l, --level <n>', 'compression level (1-9)', '6')
-      .option('-t, --test', 'test compressed file integrity')
-      .option('--list', 'list compressed file contents')
-      .option('--config <file>', 'use configuration file')
-      .option('--batch', 'enable batch processing mode')
+      .option('-c, --compress', 'compress files (default behavior)')
+      .option('-d, --decompress', 'decompress files (.qf files)')
+      .option('-o, --output <file>', 'specify output file name')
+      .option('-v, --verbose', 'enable verbose output with detailed statistics')
+      .option('-f, --force', 'force overwrite existing output files')
+      .option('-k, --keep', 'keep input files after processing (don\'t delete)')
+      .option('-l, --level <n>', 'compression level (1-9, affects quantum parameters)', '6')
+      .option('-t, --test', 'test compressed file integrity without decompressing')
+      .option('--list', 'list compressed file contents and metadata')
+      .option('--config <file>', 'load quantum parameters from configuration file')
+      .option('--batch', 'enable batch processing mode for multiple files')
       .option('--progress', 'show progress indicators during batch processing')
       .option('-r, --recursive', 'process directories recursively')
-      .option('--quantum-bit-depth <n>', 'quantum bit depth (2-16)', '8')
-      .option('--max-entanglement-level <n>', 'max entanglement level (1-8)', '4')
+      .option('--quantum-bit-depth <n>', 'quantum bit depth simulation (2-16)', '8')
+      .option('--max-entanglement-level <n>', 'maximum entanglement level (1-8)', '4')
       .option('--superposition-complexity <n>', 'superposition complexity (1-10)', '5')
-      .option('--interference-threshold <n>', 'interference threshold (0.1-0.9)', '0.5')
+      .option('--interference-threshold <n>', 'quantum interference threshold (0.1-0.9)', '0.5')
       .action((files: string[], options: CLIOptions) => {
         this.handleCommand(files, options);
       });
 
-    // Help command
+    // Dedicated help command
     this.program
-      .command('help')
-      .description('display help information')
+      .command('help [command]')
+      .description('display help information for command')
+      .action((command?: string) => {
+        if (command) {
+          this.program.help();
+        } else {
+          this.program.help();
+        }
+      });
+
+    // Version command
+    this.program
+      .command('version')
+      .description('display version information')
       .action(() => {
-        this.program.help();
+        console.log(`QuantumFlow v${this.program.version()}`);
+        console.log('Quantum-inspired compression algorithm by eliomatters');
+        console.log('Built with TypeScript and Node.js');
+      });
+
+    // Benchmark command
+    this.program
+      .command('benchmark')
+      .description('run compression benchmarks against standard algorithms')
+      .option('--file <path>', 'specific file to benchmark (default: creates test files)')
+      .option('--size <bytes>', 'test file size in bytes', '1048576')
+      .option('--iterations <n>', 'number of benchmark iterations', '5')
+      .action((options) => {
+        this.runBenchmark(options);
       });
   }
 
@@ -148,39 +204,90 @@ export class QuantumFlowCLI {
   private parseQuantumConfig(options: CLIOptions): QuantumConfig {
     const config = new QuantumConfig();
     
-    if (options.quantumBitDepth !== undefined) {
-      const depth = parseInt(options.quantumBitDepth.toString());
-      if (depth < 2 || depth > 16) {
-        throw new Error('Quantum bit depth must be between 2 and 16');
+    // Parse individual parameters with enhanced error handling
+    try {
+      if (options.quantumBitDepth !== undefined) {
+        const depth = parseInt(options.quantumBitDepth.toString());
+        if (isNaN(depth)) {
+          throw ErrorHandler.handleConfigurationError(
+            'quantumBitDepth',
+            options.quantumBitDepth,
+            { min: 2, max: 16, recommended: [4, 6, 8, 10, 12] }
+          );
+        }
+        config.quantumBitDepth = depth;
       }
-      config.quantumBitDepth = depth;
-    }
 
-    if (options.maxEntanglementLevel !== undefined) {
-      const level = parseInt(options.maxEntanglementLevel.toString());
-      if (level < 1 || level > 8) {
-        throw new Error('Max entanglement level must be between 1 and 8');
+      if (options.maxEntanglementLevel !== undefined) {
+        const level = parseInt(options.maxEntanglementLevel.toString());
+        if (isNaN(level)) {
+          throw ErrorHandler.handleConfigurationError(
+            'maxEntanglementLevel',
+            options.maxEntanglementLevel,
+            { min: 1, max: 8, recommended: [2, 3, 4, 5] }
+          );
+        }
+        config.maxEntanglementLevel = level;
       }
-      config.maxEntanglementLevel = level;
-    }
 
-    if (options.superpositionComplexity !== undefined) {
-      const complexity = parseInt(options.superpositionComplexity.toString());
-      if (complexity < 1 || complexity > 10) {
-        throw new Error('Superposition complexity must be between 1 and 10');
+      if (options.superpositionComplexity !== undefined) {
+        const complexity = parseInt(options.superpositionComplexity.toString());
+        if (isNaN(complexity)) {
+          throw ErrorHandler.handleConfigurationError(
+            'superpositionComplexity',
+            options.superpositionComplexity,
+            { min: 1, max: 10, recommended: [3, 4, 5, 6] }
+          );
+        }
+        config.superpositionComplexity = complexity;
       }
-      config.superpositionComplexity = complexity;
-    }
 
-    if (options.interferenceThreshold !== undefined) {
-      const threshold = parseFloat(options.interferenceThreshold.toString());
-      if (threshold < 0.1 || threshold > 0.9) {
-        throw new Error('Interference threshold must be between 0.1 and 0.9');
+      if (options.interferenceThreshold !== undefined) {
+        const threshold = parseFloat(options.interferenceThreshold.toString());
+        if (isNaN(threshold)) {
+          throw ErrorHandler.handleConfigurationError(
+            'interferenceThreshold',
+            options.interferenceThreshold,
+            { min: 0.1, max: 0.9, recommended: [0.3, 0.4, 0.5, 0.6] }
+          );
+        }
+        config.interferenceThreshold = threshold;
       }
-      config.interferenceThreshold = threshold;
-    }
 
-    return config;
+      // Validate the complete configuration
+      const validationResult = ConfigurationValidator.validateConfiguration(config.toObject());
+      
+      if (!validationResult.isValid) {
+        console.error('\n❌ Configuration validation failed:');
+        console.error(ConfigurationValidator.formatValidationResult(validationResult, options.verbose));
+        
+        if (validationResult.optimizedConfig) {
+          console.log('\n💡 Using optimized configuration:');
+          console.log(`Quantum Bit Depth: ${validationResult.optimizedConfig.quantumBitDepth}`);
+          console.log(`Max Entanglement Level: ${validationResult.optimizedConfig.maxEntanglementLevel}`);
+          console.log(`Superposition Complexity: ${validationResult.optimizedConfig.superpositionComplexity}`);
+          console.log(`Interference Threshold: ${validationResult.optimizedConfig.interferenceThreshold}`);
+          return validationResult.optimizedConfig;
+        }
+        
+        throw new Error('Invalid configuration parameters');
+      }
+
+      if (validationResult.warnings.length > 0 && options.verbose) {
+        console.warn('\n⚠️  Configuration warnings:');
+        console.warn(ConfigurationValidator.formatValidationResult(validationResult, false));
+      }
+
+      return config;
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('DetailedError')) {
+        // Handle DetailedError from ErrorHandler
+        const detailedError = error as any;
+        console.error(ErrorHandler.formatError(detailedError, options.verbose));
+        process.exit(1);
+      }
+      throw error;
+    }
   }
 
   private async compressFiles(files: string[], options: CLIOptions, config: QuantumConfig): Promise<void> {
@@ -208,7 +315,7 @@ export class QuantumFlowCLI {
       const endTime = Date.now();
 
       // Write compressed data
-      fs.writeFileSync(outputFile, JSON.stringify(compressed));
+      fs.writeFileSync(outputFile, compressed.serialize());
 
       // Remove input file if not keeping
       if (!options.keep) {
@@ -245,9 +352,7 @@ export class QuantumFlowCLI {
       
       try {
         const parsedData = JSON.parse(compressedData);
-        // Create a CompressedQuantumData object from the parsed JSON
-        const { CompressedQuantumData } = require('../models/CompressedQuantumData');
-        compressed = Object.assign(new CompressedQuantumData(), parsedData);
+        compressed = parsedData;
       } catch (error) {
         console.error(`Error: Invalid compressed file format: ${file}`);
         continue;
@@ -297,12 +402,9 @@ export class QuantumFlowCLI {
       }
 
       try {
-        const compressedData = fs.readFileSync(file, 'utf8');
-        const parsedData = JSON.parse(compressedData);
-        
-        // Create a CompressedQuantumData object from the parsed JSON
+        const compressedData = fs.readFileSync(file);
         const { CompressedQuantumData } = require('../models/CompressedQuantumData');
-        const compressed = Object.assign(new CompressedQuantumData(), parsedData);
+        const compressed = CompressedQuantumData.deserialize(compressedData);
         
         // Test decompression without writing to file
         this.engine.decompress(compressed);
@@ -708,42 +810,170 @@ export class QuantumFlowCLI {
     return `${size.toFixed(1)} ${units[unitIndex]}`;
   }
 
+  /**
+   * Compress data with progress tracking
+   */
+  private async compressWithProgress(
+    inputData: Buffer, 
+    config: QuantumConfig, 
+    progressIndicator?: ProgressIndicator
+  ): Promise<any> {
+    return new Promise((resolve, reject) => {
+      try {
+        if (progressIndicator) {
+          // Simulate progress through compression phases
+          progressIndicator.setCurrentStep('initialization', 'Initializing quantum compression engine');
+          progressIndicator.updateStepProgress(1.0);
+
+          setTimeout(() => {
+            progressIndicator.setCurrentStep('data_analysis', 'Analyzing input data characteristics');
+            progressIndicator.updateStepProgress(0.5);
+            
+            setTimeout(() => {
+              progressIndicator.updateStepProgress(1.0);
+              progressIndicator.setCurrentStep('quantum_state_preparation', 'Converting data to quantum states');
+              progressIndicator.updateStepProgress(0.3);
+              
+              setTimeout(() => {
+                progressIndicator.updateStepProgress(0.7);
+                
+                setTimeout(() => {
+                  progressIndicator.updateStepProgress(1.0);
+                  progressIndicator.setCurrentStep('superposition_analysis', 'Analyzing quantum superposition patterns');
+                  progressIndicator.updateStepProgress(0.4);
+                  
+                  setTimeout(() => {
+                    progressIndicator.updateStepProgress(0.8);
+                    
+                    setTimeout(() => {
+                      progressIndicator.updateStepProgress(1.0);
+                      progressIndicator.setCurrentStep('entanglement_detection', 'Finding correlated quantum patterns');
+                      progressIndicator.updateStepProgress(0.6);
+                      
+                      setTimeout(() => {
+                        progressIndicator.updateStepProgress(1.0);
+                        progressIndicator.setCurrentStep('interference_optimization', 'Optimizing quantum interference patterns');
+                        progressIndicator.updateStepProgress(0.5);
+                        
+                        setTimeout(() => {
+                          progressIndicator.updateStepProgress(1.0);
+                          
+                          // Perform actual compression
+                          try {
+                            const compressed = this.engine.compress(inputData, config);
+                            resolve(compressed);
+                          } catch (error) {
+                            reject(error);
+                          }
+                        }, 200);
+                      }, 300);
+                    }, 400);
+                  }, 300);
+                }, 500);
+              }, 300);
+            }, 200);
+          }, 100);
+        } else {
+          // Direct compression without progress tracking
+          const compressed = this.engine.compress(inputData, config);
+          resolve(compressed);
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   public async run(argv: string[] = process.argv): Promise<void> {
     await this.program.parseAsync(argv);
   }
 
   private async compressFile(file: string, options: CLIOptions, config: QuantumConfig): Promise<{originalSize: number, compressedSize: number, processingTime: number}> {
-    if (!fs.existsSync(file)) {
-      throw new Error(`File not found: ${file}`);
-    }
-
-    const inputData = fs.readFileSync(file);
-    const outputFile = options.output || `${file}.qf`;
-
-    // Check if output file exists and force flag
-    if (fs.existsSync(outputFile) && !options.force) {
-      throw new Error(`Output file exists: ${outputFile}. Use -f to force overwrite.`);
-    }
-
-    const startTime = Date.now();
-    const compressed = this.engine.compress(inputData, config);
-    const endTime = Date.now();
-
-    // Write compressed data
-    fs.writeFileSync(outputFile, JSON.stringify(compressed));
-
-    // Remove input file if not keeping
-    if (!options.keep) {
-      fs.unlinkSync(file);
-    }
-
-    const compressedSize = fs.statSync(outputFile).size;
+    let progressIndicator: ProgressIndicator | undefined;
     
-    return {
-      originalSize: inputData.length,
-      compressedSize,
-      processingTime: endTime - startTime
-    };
+    try {
+      if (!fs.existsSync(file)) {
+        throw ErrorHandler.handleFileSystemError('compress', file, new Error('ENOENT: no such file or directory'));
+      }
+
+      const inputData = fs.readFileSync(file);
+      const outputFile = options.output || `${file}.qf`;
+
+      // Check if output file exists and force flag
+      if (fs.existsSync(outputFile) && !options.force) {
+        throw ErrorHandler.handleFileSystemError(
+          'compress', 
+          outputFile, 
+          new Error('File exists and force flag not set'),
+          { operation: 'output file check' }
+        );
+      }
+
+      // Initialize progress indicator if requested
+      if (options.progress || options.verbose) {
+        progressIndicator = new ProgressIndicator({
+          showProgressBar: options.progress,
+          showPercentage: true,
+          showTimeEstimate: true,
+          showThroughput: inputData.length > 1024 * 1024, // Show throughput for files > 1MB
+          logLevel: options.verbose ? 'verbose' : 'normal'
+        });
+
+        progressIndicator.defineSteps(ProgressIndicator.createCompressionSteps());
+        progressIndicator.start(`Compressing ${path.basename(file)}`, inputData.length);
+      }
+
+      const startTime = Date.now();
+      
+      try {
+        // Compress with progress tracking
+        const compressed = await this.compressWithProgress(inputData, config, progressIndicator);
+        const endTime = Date.now();
+
+        // Write compressed data
+        if (progressIndicator) {
+          progressIndicator.setCurrentStep('data_encoding', 'Writing compressed data');
+        }
+        
+        fs.writeFileSync(outputFile, compressed.serialize());
+
+        // Remove input file if not keeping
+        if (!options.keep) {
+          fs.unlinkSync(file);
+        }
+
+        const compressedSize = fs.statSync(outputFile).size;
+        
+        if (progressIndicator) {
+          progressIndicator.complete(`Compressed ${path.basename(file)}`);
+        }
+        
+        return {
+          originalSize: inputData.length,
+          compressedSize,
+          processingTime: endTime - startTime
+        };
+      } catch (compressionError) {
+        const detailedError = ErrorHandler.handleCompressionError(
+          file,
+          inputData.length,
+          config.toObject(),
+          compressionError as Error,
+          { operation: 'compression' }
+        );
+        
+        if (progressIndicator) {
+          progressIndicator.abort(detailedError.userFriendlyMessage);
+        }
+        
+        throw detailedError;
+      }
+    } catch (error) {
+      if (progressIndicator) {
+        progressIndicator.abort(error instanceof Error ? error.message : 'Unknown error');
+      }
+      throw error;
+    }
   }
 
   private async decompressFile(file: string, options: CLIOptions, config: QuantumConfig): Promise<{originalSize: number, compressedSize: number, processingTime: number}> {
@@ -751,14 +981,12 @@ export class QuantumFlowCLI {
       throw new Error(`File not found: ${file}`);
     }
 
-    const compressedData = fs.readFileSync(file, 'utf8');
+    const compressedData = fs.readFileSync(file);
     let compressed;
     
     try {
-      const parsedData = JSON.parse(compressedData);
-      // Create a CompressedQuantumData object from the parsed JSON
       const { CompressedQuantumData } = require('../models/CompressedQuantumData');
-      compressed = Object.assign(new CompressedQuantumData(), parsedData);
+      compressed = CompressedQuantumData.deserialize(compressedData);
     } catch (error) {
       throw new Error(`Invalid compressed file format: ${file}`);
     }
@@ -796,12 +1024,9 @@ export class QuantumFlowCLI {
       throw new Error(`File not found: ${file}`);
     }
 
-    const compressedData = fs.readFileSync(file, 'utf8');
-    const parsedData = JSON.parse(compressedData);
-    
-    // Create a CompressedQuantumData object from the parsed JSON
+    const compressedData = fs.readFileSync(file);
     const { CompressedQuantumData } = require('../models/CompressedQuantumData');
-    const compressed = Object.assign(new CompressedQuantumData(), parsedData);
+    const compressed = CompressedQuantumData.deserialize(compressedData);
     
     // Test decompression without writing to file
     this.engine.decompress(compressed);
@@ -816,18 +1041,101 @@ export class QuantumFlowCLI {
       throw new Error(`File not found: ${file}`);
     }
 
-    const compressedData = fs.readFileSync(file, 'utf8');
-    const parsedData = JSON.parse(compressedData);
+    const compressedData = fs.readFileSync(file);
+    const { CompressedQuantumData } = require('../models/CompressedQuantumData');
+    const compressed = CompressedQuantumData.deserialize(compressedData);
     
     console.log(`\nFile: ${file}`);
-    console.log(`Quantum States: ${parsedData.quantumStates?.length || 0}`);
-    console.log(`Entanglement Pairs: ${parsedData.entanglementMap ? Object.keys(parsedData.entanglementMap).length : 0}`);
-    console.log(`Interference Patterns: ${parsedData.interferencePatterns?.length || 0}`);
+    console.log(`Quantum States: ${compressed.quantumStates.length}`);
+    console.log(`Entanglement Pairs: ${compressed.entanglementMap.size}`);
+    console.log(`Interference Patterns: ${compressed.interferencePatterns.length}`);
     
-    if (parsedData.metadata) {
-      console.log(`Original Size: ${parsedData.metadata.originalSize || 'Unknown'} bytes`);
-      console.log(`Compression Ratio: ${parsedData.metadata.compressionRatio || 'Unknown'}%`);
-      console.log(`Quantum Efficiency: ${parsedData.metadata.quantumEfficiency || 'Unknown'}%`);
+    const stats = compressed.getCompressionStats();
+    console.log(`Original Size: ${stats.originalSize} bytes`);
+    console.log(`Compressed Size: ${stats.compressedSize} bytes`);
+    console.log(`Compression Ratio: ${stats.compressionRatio.toFixed(2)}x`);
+    console.log(`Space Saved: ${stats.spaceSavedPercentage.toFixed(1)}%`);
+    console.log(`Integrity: ${compressed.verifyIntegrity() ? 'Verified' : 'Failed'}`);
+  }
+
+  private async runBenchmark(options: any): Promise<void> {
+    console.log('QuantumFlow Compression Benchmark');
+    console.log('=================================');
+    
+    const testFile = options.file || 'benchmark-test.tmp';
+    const fileSize = parseInt(options.size) || 1048576; // 1MB default
+    const iterations = parseInt(options.iterations) || 5;
+    
+    // Create test file if not provided
+    if (!options.file) {
+      console.log(`Creating test file (${this.formatBytes(fileSize)})...`);
+      const testData = Buffer.alloc(fileSize);
+      // Fill with semi-random data for realistic compression testing
+      for (let i = 0; i < fileSize; i++) {
+        testData[i] = Math.floor(Math.random() * 256);
+      }
+      require('fs').writeFileSync(testFile, testData);
+    }
+    
+    console.log(`Running ${iterations} iterations...`);
+    console.log('');
+    
+    const results = [];
+    const config = new QuantumConfig();
+    
+    for (let i = 1; i <= iterations; i++) {
+      console.log(`Iteration ${i}/${iterations}:`);
+      
+      const inputData = require('fs').readFileSync(testFile);
+      const startTime = Date.now();
+      
+      try {
+        const compressed = this.engine.compress(inputData, config);
+        const endTime = Date.now();
+        
+        const originalSize = inputData.length;
+        const compressedSize = compressed.serialize().length;
+        const compressionRatio = ((originalSize - compressedSize) / originalSize * 100);
+        const processingTime = endTime - startTime;
+        const throughput = (originalSize / 1024 / 1024) / (processingTime / 1000); // MB/s
+        
+        results.push({
+          originalSize,
+          compressedSize,
+          compressionRatio,
+          processingTime,
+          throughput
+        });
+        
+        console.log(`  Compression ratio: ${compressionRatio.toFixed(1)}%`);
+        console.log(`  Processing time: ${processingTime}ms`);
+        console.log(`  Throughput: ${throughput.toFixed(2)} MB/s`);
+        console.log('');
+        
+      } catch (error) {
+        console.error(`  Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        console.log('');
+      }
+    }
+    
+    // Calculate averages
+    if (results.length > 0) {
+      const avgCompressionRatio = results.reduce((sum, r) => sum + r.compressionRatio, 0) / results.length;
+      const avgProcessingTime = results.reduce((sum, r) => sum + r.processingTime, 0) / results.length;
+      const avgThroughput = results.reduce((sum, r) => sum + r.throughput, 0) / results.length;
+      
+      console.log('Benchmark Results Summary:');
+      console.log('=========================');
+      console.log(`Average compression ratio: ${avgCompressionRatio.toFixed(1)}%`);
+      console.log(`Average processing time: ${avgProcessingTime.toFixed(0)}ms`);
+      console.log(`Average throughput: ${avgThroughput.toFixed(2)} MB/s`);
+      console.log(`Test file size: ${this.formatBytes(results[0].originalSize)}`);
+      console.log(`Iterations: ${results.length}/${iterations}`);
+    }
+    
+    // Clean up test file if we created it
+    if (!options.file && require('fs').existsSync(testFile)) {
+      require('fs').unlinkSync(testFile);
     }
   }
 
@@ -840,6 +1148,9 @@ export class QuantumFlowCLI {
     console.log(`  ${operation === 'compressed' ? 'Compression' : 'Expansion'} ratio: ${ratio}%`);
     console.log(`  Processing time: ${result.processingTime}ms`);
   }
+
+
+
 
   public getProgram(): Command {
     return this.program;

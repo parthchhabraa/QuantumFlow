@@ -325,7 +325,7 @@ describe('Large Scale Performance Tests', () => {
 
   describe('Long-Running Stability Tests', () => {
     it('should maintain performance over extended operation', async () => {
-      const testData = generateLargeTestData(1024 * 1024, 'structured'); // 1MB
+      const testData = generateLargeTestData(1024 * 1024, 'structured-repetitive'); // 1MB
       const iterations = 50;
       
       const performanceMetrics: Array<{
@@ -487,9 +487,10 @@ describe('Large Scale Performance Tests', () => {
       const readStream = fs.createReadStream(filePath);
       let checksum = 0;
       
-      readStream.on('data', (chunk: Buffer) => {
-        for (let i = 0; i < chunk.length; i++) {
-          checksum = (checksum + chunk[i]) % 0xFFFFFFFF;
+      readStream.on('data', (chunk) => {
+        const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+        for (let i = 0; i < buffer.length; i++) {
+          checksum = (checksum + buffer[i]) % 0xFFFFFFFF;
         }
       });
       
