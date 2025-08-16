@@ -76,7 +76,7 @@ have a negative impact on the project or its community.
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the community leaders responsible for enforcement at
-[contact@eliomatters.com](mailto:contact@eliomatters.com).
+[hello@parthchhabra.in](mailto:hello@parthchhabra.in).
 
 All complaints will be reviewed and investigated promptly and fairly.
 
@@ -132,7 +132,7 @@ project community.
 ## Reporting Guidelines
 
 If you experience or witness unacceptable behavior, or have any other concerns,
-please report it by contacting the project team at [contact@eliomatters.com](mailto:contact@eliomatters.com).
+please report it by contacting the project team at [hello@parthchhabra.in](mailto:hello@parthchhabra.in).
 
 When reporting, please include:
 
@@ -217,8 +217,8 @@ When discussing or contributing to video conferencing features:
 ## Contact Information
 
 * **Project Maintainer**: eliomatters
-* **Email**: contact@eliomatters.com
-* **GitHub**: [@eliomatters](https://github.com/eliomatters)
+* **Email**: [hello@parthchhabra.in](mailto:hello@parthchhabra.in)
+* **GitHub**: [@eliomatters](https://github.com/parthchhabraa)
 
 For urgent matters or if you're uncomfortable contacting the maintainer directly,
 you can also reach out through GitHub's reporting mechanisms.
