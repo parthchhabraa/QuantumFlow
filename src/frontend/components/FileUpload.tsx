@@ -1,14 +1,17 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { ProgressState } from '../types/FrontendTypes';
 
 interface FileUploadProps {
   onFilesSelected: (files: File[]) => Promise<void>;
   isProcessing: boolean;
+  progressState?: ProgressState | null;
 }
 
 export const FileUploadComponent: React.FC<FileUploadProps> = ({ 
   onFilesSelected, 
-  isProcessing 
+  isProcessing,
+  progressState 
 }) => {
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [dragActive, setDragActive] = useState(false);
@@ -100,7 +103,10 @@ export const FileUploadComponent: React.FC<FileUploadProps> = ({
         {isProcessing ? (
           <div>
             <p style={{ fontSize: '1.2rem', marginBottom: '10px' }}>
-              Processing with Quantum Compression...
+              {progressState?.phase || 'Processing with Quantum Compression...'}
+            </p>
+            <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '15px' }}>
+              {progressState?.message || 'Applying quantum algorithms...'}
             </p>
             <div className="quantum-spinner" style={{
               width: '40px',
@@ -111,6 +117,28 @@ export const FileUploadComponent: React.FC<FileUploadProps> = ({
               animation: 'spin 1s linear infinite',
               margin: '0 auto'
             }} />
+            {progressState && (
+              <div style={{ marginTop: '15px' }}>
+                <div style={{
+                  width: '100%',
+                  height: '8px',
+                  backgroundColor: '#e5e7eb',
+                  borderRadius: '4px',
+                  overflow: 'hidden'
+                }}>
+                  <div style={{
+                    width: `${progressState.progress}%`,
+                    height: '100%',
+                    backgroundColor: '#667eea',
+                    transition: 'width 0.3s ease',
+                    borderRadius: '4px'
+                  }} />
+                </div>
+                <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '5px' }}>
+                  {Math.round(progressState.progress)}% Complete
+                </p>
+              </div>
+            )}
           </div>
         ) : (
           <div>
@@ -137,7 +165,7 @@ export const FileUploadComponent: React.FC<FileUploadProps> = ({
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }

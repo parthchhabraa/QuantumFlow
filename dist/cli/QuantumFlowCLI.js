@@ -43,6 +43,9 @@ const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const QuantumCompressionEngine_1 = require("../core/QuantumCompressionEngine");
 const QuantumConfig_1 = require("../models/QuantumConfig");
+const ErrorHandler_1 = require("../core/ErrorHandler");
+const ProgressIndicator_1 = require("../core/ProgressIndicator");
+const ConfigurationValidator_1 = require("../core/ConfigurationValidator");
 class QuantumFlowCLI {
     constructor() {
         this.program = new commander_1.Command();
@@ -179,35 +182,66 @@ class QuantumFlowCLI {
     }
     parseQuantumConfig(options) {
         const config = new QuantumConfig_1.QuantumConfig();
-        if (options.quantumBitDepth !== undefined) {
-            const depth = parseInt(options.quantumBitDepth.toString());
-            if (depth < 2 || depth > 16) {
-                throw new Error('Quantum bit depth must be between 2 and 16');
+        // Parse individual parameters with enhanced error handling
+        try {
+            if (options.quantumBitDepth !== undefined) {
+                const depth = parseInt(options.quantumBitDepth.toString());
+                if (isNaN(depth)) {
+                    throw ErrorHandler_1.ErrorHandler.handleConfigurationError('quantumBitDepth', options.quantumBitDepth, { min: 2, max: 16, recommended: [4, 6, 8, 10, 12] });
+                }
+                config.quantumBitDepth = depth;
             }
-            config.quantumBitDepth = depth;
-        }
-        if (options.maxEntanglementLevel !== undefined) {
-            const level = parseInt(options.maxEntanglementLevel.toString());
-            if (level < 1 || level > 8) {
-                throw new Error('Max entanglement level must be between 1 and 8');
+            if (options.maxEntanglementLevel !== undefined) {
+                const level = parseInt(options.maxEntanglementLevel.toString());
+                if (isNaN(level)) {
+                    throw ErrorHandler_1.ErrorHandler.handleConfigurationError('maxEntanglementLevel', options.maxEntanglementLevel, { min: 1, max: 8, recommended: [2, 3, 4, 5] });
+                }
+                config.maxEntanglementLevel = level;
             }
-            config.maxEntanglementLevel = level;
-        }
-        if (options.superpositionComplexity !== undefined) {
-            const complexity = parseInt(options.superpositionComplexity.toString());
-            if (complexity < 1 || complexity > 10) {
-                throw new Error('Superposition complexity must be between 1 and 10');
+            if (options.superpositionComplexity !== undefined) {
+                const complexity = parseInt(options.superpositionComplexity.toString());
+                if (isNaN(complexity)) {
+                    throw ErrorHandler_1.ErrorHandler.handleConfigurationError('superpositionComplexity', options.superpositionComplexity, { min: 1, max: 10, recommended: [3, 4, 5, 6] });
+                }
+                config.superpositionComplexity = complexity;
             }
-            config.superpositionComplexity = complexity;
-        }
-        if (options.interferenceThreshold !== undefined) {
-            const threshold = parseFloat(options.interferenceThreshold.toString());
-            if (threshold < 0.1 || threshold > 0.9) {
-                throw new Error('Interference threshold must be between 0.1 and 0.9');
+            if (options.interferenceThreshold !== undefined) {
+                const threshold = parseFloat(options.interferenceThreshold.toString());
+                if (isNaN(threshold)) {
+                    throw ErrorHandler_1.ErrorHandler.handleConfigurationError('interferenceThreshold', options.interferenceThreshold, { min: 0.1, max: 0.9, recommended: [0.3, 0.4, 0.5, 0.6] });
+                }
+                config.interferenceThreshold = threshold;
             }
-            config.interferenceThreshold = threshold;
+            // Validate the complete configuration
+            const validationResult = ConfigurationValidator_1.ConfigurationValidator.validateConfiguration(config.toObject());
+            if (!validationResult.isValid) {
+                console.error('\n❌ Configuration validation failed:');
+                console.error(ConfigurationValidator_1.ConfigurationValidator.formatValidationResult(validationResult, options.verbose));
+                if (validationResult.optimizedConfig) {
+                    console.log('\n💡 Using optimized configuration:');
+                    console.log(`Quantum Bit Depth: ${validationResult.optimizedConfig.quantumBitDepth}`);
+                    console.log(`Max Entanglement Level: ${validationResult.optimizedConfig.maxEntanglementLevel}`);
+                    console.log(`Superposition Complexity: ${validationResult.optimizedConfig.superpositionComplexity}`);
+                    console.log(`Interference Threshold: ${validationResult.optimizedConfig.interferenceThreshold}`);
+                    return validationResult.optimizedConfig;
+                }
+                throw new Error('Invalid configuration parameters');
+            }
+            if (validationResult.warnings.length > 0 && options.verbose) {
+                console.warn('\n⚠️  Configuration warnings:');
+                console.warn(ConfigurationValidator_1.ConfigurationValidator.formatValidationResult(validationResult, false));
+            }
+            return config;
         }
-        return config;
+        catch (error) {
+            if (error instanceof Error && error.message.includes('DetailedError')) {
+                // Handle DetailedError from ErrorHandler
+                const detailedError = error;
+                console.error(ErrorHandler_1.ErrorHandler.formatError(detailedError, options.verbose));
+                process.exit(1);
+            }
+            throw error;
+        }
     }
     async compressFiles(files, options, config) {
         for (const file of files) {
@@ -636,34 +670,134 @@ class QuantumFlowCLI {
         }
         return `${size.toFixed(1)} ${units[unitIndex]}`;
     }
+    /**
+     * Compress data with progress tracking
+     */
+    async compressWithProgress(inputData, config, progressIndicator) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (progressIndicator) {
+                    // Simulate progress through compression phases
+                    progressIndicator.setCurrentStep('initialization', 'Initializing quantum compression engine');
+                    progressIndicator.updateStepProgress(1.0);
+                    setTimeout(() => {
+                        progressIndicator.setCurrentStep('data_analysis', 'Analyzing input data characteristics');
+                        progressIndicator.updateStepProgress(0.5);
+                        setTimeout(() => {
+                            progressIndicator.updateStepProgress(1.0);
+                            progressIndicator.setCurrentStep('quantum_state_preparation', 'Converting data to quantum states');
+                            progressIndicator.updateStepProgress(0.3);
+                            setTimeout(() => {
+                                progressIndicator.updateStepProgress(0.7);
+                                setTimeout(() => {
+                                    progressIndicator.updateStepProgress(1.0);
+                                    progressIndicator.setCurrentStep('superposition_analysis', 'Analyzing quantum superposition patterns');
+                                    progressIndicator.updateStepProgress(0.4);
+                                    setTimeout(() => {
+                                        progressIndicator.updateStepProgress(0.8);
+                                        setTimeout(() => {
+                                            progressIndicator.updateStepProgress(1.0);
+                                            progressIndicator.setCurrentStep('entanglement_detection', 'Finding correlated quantum patterns');
+                                            progressIndicator.updateStepProgress(0.6);
+                                            setTimeout(() => {
+                                                progressIndicator.updateStepProgress(1.0);
+                                                progressIndicator.setCurrentStep('interference_optimization', 'Optimizing quantum interference patterns');
+                                                progressIndicator.updateStepProgress(0.5);
+                                                setTimeout(() => {
+                                                    progressIndicator.updateStepProgress(1.0);
+                                                    // Perform actual compression
+                                                    try {
+                                                        const compressed = this.engine.compress(inputData, config);
+                                                        resolve(compressed);
+                                                    }
+                                                    catch (error) {
+                                                        reject(error);
+                                                    }
+                                                }, 200);
+                                            }, 300);
+                                        }, 400);
+                                    }, 300);
+                                }, 500);
+                            }, 300);
+                        }, 200);
+                    }, 100);
+                }
+                else {
+                    // Direct compression without progress tracking
+                    const compressed = this.engine.compress(inputData, config);
+                    resolve(compressed);
+                }
+            }
+            catch (error) {
+                reject(error);
+            }
+        });
+    }
     async run(argv = process.argv) {
         await this.program.parseAsync(argv);
     }
     async compressFile(file, options, config) {
-        if (!fs.existsSync(file)) {
-            throw new Error(`File not found: ${file}`);
+        let progressIndicator;
+        try {
+            if (!fs.existsSync(file)) {
+                throw ErrorHandler_1.ErrorHandler.handleFileSystemError('compress', file, new Error('ENOENT: no such file or directory'));
+            }
+            const inputData = fs.readFileSync(file);
+            const outputFile = options.output || `${file}.qf`;
+            // Check if output file exists and force flag
+            if (fs.existsSync(outputFile) && !options.force) {
+                throw ErrorHandler_1.ErrorHandler.handleFileSystemError('compress', outputFile, new Error('File exists and force flag not set'), { operation: 'output file check' });
+            }
+            // Initialize progress indicator if requested
+            if (options.progress || options.verbose) {
+                progressIndicator = new ProgressIndicator_1.ProgressIndicator({
+                    showProgressBar: options.progress,
+                    showPercentage: true,
+                    showTimeEstimate: true,
+                    showThroughput: inputData.length > 1024 * 1024, // Show throughput for files > 1MB
+                    logLevel: options.verbose ? 'verbose' : 'normal'
+                });
+                progressIndicator.defineSteps(ProgressIndicator_1.ProgressIndicator.createCompressionSteps());
+                progressIndicator.start(`Compressing ${path.basename(file)}`, inputData.length);
+            }
+            const startTime = Date.now();
+            try {
+                // Compress with progress tracking
+                const compressed = await this.compressWithProgress(inputData, config, progressIndicator);
+                const endTime = Date.now();
+                // Write compressed data
+                if (progressIndicator) {
+                    progressIndicator.setCurrentStep('data_encoding', 'Writing compressed data');
+                }
+                fs.writeFileSync(outputFile, compressed.serialize());
+                // Remove input file if not keeping
+                if (!options.keep) {
+                    fs.unlinkSync(file);
+                }
+                const compressedSize = fs.statSync(outputFile).size;
+                if (progressIndicator) {
+                    progressIndicator.complete(`Compressed ${path.basename(file)}`);
+                }
+                return {
+                    originalSize: inputData.length,
+                    compressedSize,
+                    processingTime: endTime - startTime
+                };
+            }
+            catch (compressionError) {
+                const detailedError = ErrorHandler_1.ErrorHandler.handleCompressionError(file, inputData.length, config.toObject(), compressionError, { operation: 'compression' });
+                if (progressIndicator) {
+                    progressIndicator.abort(detailedError.userFriendlyMessage);
+                }
+                throw detailedError;
+            }
         }
-        const inputData = fs.readFileSync(file);
-        const outputFile = options.output || `${file}.qf`;
-        // Check if output file exists and force flag
-        if (fs.existsSync(outputFile) && !options.force) {
-            throw new Error(`Output file exists: ${outputFile}. Use -f to force overwrite.`);
+        catch (error) {
+            if (progressIndicator) {
+                progressIndicator.abort(error instanceof Error ? error.message : 'Unknown error');
+            }
+            throw error;
         }
-        const startTime = Date.now();
-        const compressed = this.engine.compress(inputData, config);
-        const endTime = Date.now();
-        // Write compressed data
-        fs.writeFileSync(outputFile, compressed.serialize());
-        // Remove input file if not keeping
-        if (!options.keep) {
-            fs.unlinkSync(file);
-        }
-        const compressedSize = fs.statSync(outputFile).size;
-        return {
-            originalSize: inputData.length,
-            compressedSize,
-            processingTime: endTime - startTime
-        };
     }
     async decompressFile(file, options, config) {
         if (!fs.existsSync(file)) {

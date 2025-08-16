@@ -61,6 +61,10 @@ export declare class QuantumFlowCLI {
     private listFilesBatch;
     private handleBatchResults;
     private formatBytes;
+    /**
+     * Compress data with progress tracking
+     */
+    private compressWithProgress;
     run(argv?: string[]): Promise<void>;
     private compressFile;
     private decompressFile;

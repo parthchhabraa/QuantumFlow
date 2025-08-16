@@ -1,0 +1,1 @@
+{"version":3,"file":"MetricsDisplay.d.ts","sourceRoot":"","sources":["../../../src/frontend/components/MetricsDisplay.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,OAAO,CAAC;AAC1B,OAAO,EAAE,sBAAsB,EAAE,MAAM,wBAAwB,CAAC;AAEhE,UAAU,mBAAmB;IAC3B,OAAO,EAAE,sBAAsB,GAAG,IAAI,CAAC;IACvC,YAAY,EAAE,OAAO,CAAC;CACvB;AAED,eAAO,MAAM,cAAc,EAAE,KAAK,CAAC,EAAE,CAAC,mBAAmB,CA6MxD,CAAC"}

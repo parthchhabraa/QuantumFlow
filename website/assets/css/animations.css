@@ -1,0 +1,386 @@
+/* Particle Animation Styles */
+.particle {
+    position: absolute;
+    background: var(--primary-color);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.6;
+    animation: float 6s ease-in-out infinite;
+}
+
+.particle.quantum {
+    background: var(--accent-color);
+    animation: quantumFloat 8s ease-in-out infinite;
+}
+
+.particle.entangled {
+    background: var(--secondary-color);
+    animation: entangledFloat 10s ease-in-out infinite;
+}
+
+/* Quantum Connection Lines */
+.quantum-connection {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    opacity: 0.3;
+    animation: pulse 3s ease-in-out infinite;
+}
+
+/* Floating Animations */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.6;
+    }
+    25% {
+        transform: translateY(-20px) rotate(90deg);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translateY(-10px) rotate(180deg);
+        opacity: 0.4;
+    }
+    75% {
+        transform: translateY(-30px) rotate(270deg);
+        opacity: 0.9;
+    }
+}
+
+@keyframes quantumFloat {
+    0%, 100% {
+        transform: translateY(0px) translateX(0px) scale(1);
+        opacity: 0.5;
+    }
+    33% {
+        transform: translateY(-40px) translateX(20px) scale(1.2);
+        opacity: 0.8;
+    }
+    66% {
+        transform: translateY(-20px) translateX(-15px) scale(0.8);
+        opacity: 0.6;
+    }
+}
+
+@keyframes entangledFloat {
+    0%, 100% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+        opacity: 0.4;
+    }
+    20% {
+        transform: translateY(-30px) translateX(30px) rotate(72deg);
+        opacity: 0.7;
+    }
+    40% {
+        transform: translateY(-60px) translateX(-20px) rotate(144deg);
+        opacity: 0.9;
+    }
+    60% {
+        transform: translateY(-40px) translateX(-40px) rotate(216deg);
+        opacity: 0.6;
+    }
+    80% {
+        transform: translateY(-10px) translateX(10px) rotate(288deg);
+        opacity: 0.8;
+    }
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scaleX(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scaleX(1.5);
+    }
+}
+
+/* Quantum Interference Pattern */
+.interference-pattern {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255, 0, 110, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(131, 56, 236, 0.1) 0%, transparent 50%);
+    animation: interferenceShift 15s ease-in-out infinite;
+}
+
+@keyframes interferenceShift {
+    0%, 100% {
+        transform: rotate(0deg) scale(1);
+        opacity: 0.5;
+    }
+    33% {
+        transform: rotate(120deg) scale(1.1);
+        opacity: 0.7;
+    }
+    66% {
+        transform: rotate(240deg) scale(0.9);
+        opacity: 0.6;
+    }
+}
+
+/* Quantum State Transitions */
+.quantum-state {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    animation: quantumState 4s ease-in-out infinite;
+}
+
+@keyframes quantumState {
+    0% {
+        transform: scale(1);
+        background: var(--primary-color);
+        box-shadow: 0 0 10px var(--primary-color);
+    }
+    25% {
+        transform: scale(1.5);
+        background: var(--accent-color);
+        box-shadow: 0 0 20px var(--accent-color);
+    }
+    50% {
+        transform: scale(0.5);
+        background: var(--secondary-color);
+        box-shadow: 0 0 15px var(--secondary-color);
+    }
+    75% {
+        transform: scale(2);
+        background: var(--primary-color);
+        box-shadow: 0 0 25px var(--primary-color);
+    }
+    100% {
+        transform: scale(1);
+        background: var(--primary-color);
+        box-shadow: 0 0 10px var(--primary-color);
+    }
+}
+
+/* Superposition Effect */
+.superposition {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    animation: superposition 6s linear infinite;
+}
+
+@keyframes superposition {
+    0% {
+        transform: translateX(0) translateY(0);
+        opacity: 1;
+    }
+    25% {
+        transform: translateX(100px) translateY(-50px);
+        opacity: 0.5;
+    }
+    50% {
+        transform: translateX(200px) translateY(0);
+        opacity: 1;
+    }
+    75% {
+        transform: translateX(100px) translateY(50px);
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateX(0) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Entanglement Effect */
+.entanglement-pair {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    animation: entanglement 8s ease-in-out infinite;
+}
+
+.entangled-particle {
+    width: 5px;
+    height: 5px;
+    background: var(--secondary-color);
+    border-radius: 50%;
+    margin: 0 50px;
+    animation: spin 2s linear infinite;
+}
+
+.entanglement-line {
+    width: 100px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--secondary-color), transparent, var(--secondary-color));
+    animation: energyFlow 1.5s ease-in-out infinite;
+}
+
+@keyframes entanglement {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(180deg);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes energyFlow {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scaleX(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scaleX(1.2);
+    }
+}
+
+/* Wave Function Collapse */
+.wave-function {
+    position: absolute;
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+    animation: waveCollapse 5s ease-in-out infinite;
+}
+
+@keyframes waveCollapse {
+    0% {
+        transform: scaleX(0) scaleY(1);
+        opacity: 0;
+    }
+    25% {
+        transform: scaleX(1) scaleY(3);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scaleX(1.5) scaleY(1);
+        opacity: 1;
+    }
+    75% {
+        transform: scaleX(0.5) scaleY(2);
+        opacity: 0.6;
+    }
+    100% {
+        transform: scaleX(0) scaleY(1);
+        opacity: 0;
+    }
+}
+
+/* Quantum Tunneling Effect */
+.quantum-tunnel {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    animation: tunnel 7s ease-in-out infinite;
+}
+
+@keyframes tunnel {
+    0% {
+        transform: translateX(-100px) scale(1);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    45% {
+        transform: translateX(-10px) scale(0.2);
+        opacity: 0.3;
+    }
+    55% {
+        transform: translateX(10px) scale(0.2);
+        opacity: 0.3;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100px) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Decoherence Effect */
+.decoherence {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    animation: decohere 9s ease-in-out infinite;
+}
+
+@keyframes decohere {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+        filter: blur(0px);
+    }
+    25% {
+        transform: scale(1.5);
+        opacity: 0.8;
+        filter: blur(1px);
+    }
+    50% {
+        transform: scale(2);
+        opacity: 0.5;
+        filter: blur(3px);
+    }
+    75% {
+        transform: scale(3);
+        opacity: 0.2;
+        filter: blur(5px);
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+        filter: blur(8px);
+    }
+}
+
+/* Responsive Animations */
+@media (max-width: 768px) {
+    .particle,
+    .quantum-state,
+    .superposition,
+    .quantum-tunnel,
+    .decoherence {
+        animation-duration: 8s;
+    }
+    
+    .entanglement-pair {
+        animation-duration: 10s;
+    }
+    
+    .wave-function {
+        animation-duration: 6s;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .particle,
+    .quantum-state,
+    .superposition,
+    .entanglement-pair,
+    .wave-function,
+    .quantum-tunnel,
+    .decoherence,
+    .interference-pattern {
+        animation: none;
+    }
+}

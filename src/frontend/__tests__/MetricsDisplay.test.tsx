@@ -38,8 +38,8 @@ describe('MetricsDisplay', () => {
     
     expect(screen.getByText('...')).toBeInTheDocument();
   });
-});  test('
-displays quantum processing details', () => {
+
+  test('displays quantum processing details', () => {
     render(<MetricsDisplay metrics={mockMetrics} isProcessing={false} />);
     
     expect(screen.getByText('Quantum Processing Details')).toBeInTheDocument();

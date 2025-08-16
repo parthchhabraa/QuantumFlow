@@ -1,11 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-
-interface ProgressState {
-  phase: string;
-  progress: number;
-  message: string;
-}
+import { ProgressState } from '../types/FrontendTypes';
 
 interface FileDecompressProps {
   onFilesSelected: (files: File[]) => Promise<void>;
@@ -224,7 +219,7 @@ export const FileDecompressComponent: React.FC<FileDecompressProps> = ({
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }

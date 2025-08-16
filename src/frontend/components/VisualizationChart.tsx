@@ -1,10 +1,10 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import { QuantumMetrics } from '../../models/QuantumMetrics';
+import { FrontendQuantumMetrics } from '../types/FrontendTypes';
 
 interface VisualizationChartProps {
-  data: QuantumMetrics[];
-  currentMetrics: QuantumMetrics | null;
+  data: FrontendQuantumMetrics[];
+  currentMetrics: FrontendQuantumMetrics | null;
 }
 
 export const VisualizationChart: React.FC<VisualizationChartProps> = ({ 
@@ -32,7 +32,7 @@ export const VisualizationChart: React.FC<VisualizationChartProps> = ({
   const quantumBreakdown = currentMetrics ? [
     { name: 'Entanglement Pairs', value: currentMetrics.entanglementPairs || 0, color: '#8b5cf6' },
     { name: 'Superposition States', value: currentMetrics.superpositionStates || 0, color: '#f59e0b' },
-    { name: 'Interference Opts', value: currentMetrics.interferenceOptimizations || 0, color: '#ef4444' },
+    { name: 'Interference Patterns', value: currentMetrics.interferencePatterns || 0, color: '#ef4444' },
     { name: 'Quantum Efficiency', value: Math.round((currentMetrics.quantumEfficiency || 0) * 100), color: '#10b981' }
   ] : [];
 

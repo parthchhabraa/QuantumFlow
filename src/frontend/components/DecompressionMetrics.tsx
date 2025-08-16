@@ -1,16 +1,5 @@
 import * as React from 'react';
-
-interface DecompressionResult {
-  originalFileName: string;
-  compressedSize: number;
-  decompressedSize: number;
-  decompressionTime: number;
-  quantumIntegrity: number;
-  entanglementPairsRestored: number;
-  superpositionStatesCollapsed: number;
-  interferencePatternsMapped: number;
-  timestamp: number;
-}
+import { DecompressionResult } from '../types/FrontendTypes';
 
 interface DecompressionMetricsProps {
   results: DecompressionResult[];
@@ -41,151 +30,230 @@ export const DecompressionMetrics: React.FC<DecompressionMetricsProps> = ({
   const displayResult = currentResult || (results.length > 0 ? results[results.length - 1] : null);
 
   return (
-    <div className="decompression-metrics">
+    <div style={{ marginTop: '2rem' }}>
       {/* Summary Cards */}
-      <div className="metrics-grid">
-        <div className="metric-card integrity-card">
-          <div className="metric-icon">🔒</div>
-          <div className="metric-content">
-            <div className="metric-value">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: '1.5rem',
+        marginBottom: '2rem'
+      }}>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '16px',
+          padding: '1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          transition: 'all 0.3s ease'
+        }}>
+          <div style={{
+            fontSize: '2rem',
+            width: '60px',
+            height: '60px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
+          }}>🔒</div>
+          <div style={{ flex: 1 }}>
+            <div style={{
+              fontSize: '1.8rem',
+              fontWeight: '700',
+              color: '#ffffff',
+              marginBottom: '0.25rem'
+            }}>
               {(averageIntegrity * 100).toFixed(1)}%
             </div>
-            <div className="metric-label">Quantum Integrity</div>
-            <div className="metric-sublabel">Average data fidelity</div>
+            <div style={{
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              color: '#a1a1aa',
+              marginBottom: '0.125rem'
+            }}>Quantum Integrity</div>
+            <div style={{
+              fontSize: '0.75rem',
+              color: '#71717a'
+            }}>Average data fidelity</div>
           </div>
         </div>
 
-        <div className="metric-card speed-card">
-          <div className="metric-icon">⚡</div>
-          <div className="metric-content">
-            <div className="metric-value">
+        {/* Speed Card */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '16px',
+          padding: '1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          transition: 'all 0.3s ease'
+        }}>
+          <div style={{
+            fontSize: '2rem',
+            width: '60px',
+            height: '60px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, #f59e0b, #d97706)'
+          }}>⚡</div>
+          <div style={{ flex: 1 }}>
+            <div style={{
+              fontSize: '1.8rem',
+              fontWeight: '700',
+              color: '#ffffff',
+              marginBottom: '0.25rem'
+            }}>
               {displayResult ? formatTime(displayResult.decompressionTime) : '--'}
             </div>
-            <div className="metric-label">Decompression Time</div>
-            <div className="metric-sublabel">Latest operation</div>
+            <div style={{
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              color: '#a1a1aa',
+              marginBottom: '0.125rem'
+            }}>Decompression Time</div>
+            <div style={{
+              fontSize: '0.75rem',
+              color: '#71717a'
+            }}>Latest operation</div>
           </div>
         </div>
 
-        <div className="metric-card expansion-card">
-          <div className="metric-icon">📈</div>
-          <div className="metric-content">
-            <div className="metric-value">
+        {/* Expansion Card */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '16px',
+          padding: '1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          transition: 'all 0.3s ease'
+        }}>
+          <div style={{
+            fontSize: '2rem',
+            width: '60px',
+            height: '60px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)'
+          }}>📈</div>
+          <div style={{ flex: 1 }}>
+            <div style={{
+              fontSize: '1.8rem',
+              fontWeight: '700',
+              color: '#ffffff',
+              marginBottom: '0.25rem'
+            }}>
               {displayResult
                 ? `${(displayResult.decompressedSize / displayResult.compressedSize).toFixed(1)}x`
                 : '--'
               }
             </div>
-            <div className="metric-label">Expansion Ratio</div>
-            <div className="metric-sublabel">Size multiplication</div>
+            <div style={{
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              color: '#a1a1aa',
+              marginBottom: '0.125rem'
+            }}>Expansion Ratio</div>
+            <div style={{
+              fontSize: '0.75rem',
+              color: '#71717a'
+            }}>Size multiplication</div>
           </div>
         </div>
 
-        <div className="metric-card files-card">
-          <div className="metric-icon">📁</div>
-          <div className="metric-content">
-            <div className="metric-value">{results.length}</div>
-            <div className="metric-label">Files Restored</div>
-            <div className="metric-sublabel">Total processed</div>
+        {/* Files Card */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '16px',
+          padding: '1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          transition: 'all 0.3s ease'
+        }}>
+          <div style={{
+            fontSize: '2rem',
+            width: '60px',
+            height: '60px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, #ef4444, #dc2626)'
+          }}>📁</div>
+          <div style={{ flex: 1 }}>
+            <div style={{
+              fontSize: '1.8rem',
+              fontWeight: '700',
+              color: '#ffffff',
+              marginBottom: '0.25rem'
+            }}>
+              {results.length}
+            </div>
+            <div style={{
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              color: '#a1a1aa',
+              marginBottom: '0.125rem'
+            }}>Files Restored</div>
+            <div style={{
+              fontSize: '0.75rem',
+              color: '#71717a'
+            }}>Total processed</div>
           </div>
         </div>
       </div>
 
-      {/* Detailed Metrics */}
+      {/* Simple status message */}
       {displayResult && (
-        <div className="detailed-metrics">
-          <div className="glass-card">
-            <div className="card-header">
-              <div className="card-icon">📊</div>
-              <div>
-                <h3 className="card-title">Quantum Decompression Analysis</h3>
-                <p className="card-subtitle">Latest operation: {displayResult.originalFileName}</p>
-              </div>
-            </div>
-
-            <div className="metrics-content">
-              <div className="metric-row">
-                <div className="metric-item">
-                  <span className="metric-name">Compressed Size</span>
-                  <span className="metric-value">{formatFileSize(displayResult.compressedSize)}</span>
-                </div>
-                <div className="metric-item">
-                  <span className="metric-name">Decompressed Size</span>
-                  <span className="metric-value">{formatFileSize(displayResult.decompressedSize)}</span>
-                </div>
-              </div>
-
-              <div className="metric-row">
-                <div className="metric-item">
-                  <span className="metric-name">Processing Time</span>
-                  <span className="metric-value">{formatTime(displayResult.decompressionTime)}</span>
-                </div>
-                <div className="metric-item">
-                  <span className="metric-name">Quantum Integrity</span>
-                  <span className="metric-value">{(displayResult.quantumIntegrity * 100).toFixed(2)}%</span>
-                </div>
-              </div>
-
-              <div className="quantum-details">
-                <h4>Quantum State Reconstruction</h4>
-                <div className="quantum-stats">
-                  <div className="quantum-stat">
-                    <div className="stat-icon">🔗</div>
-                    <div className="stat-info">
-                      <div className="stat-value">{displayResult.entanglementPairsRestored}</div>
-                      <div className="stat-label">Entanglement Pairs Restored</div>
-                    </div>
-                  </div>
-                  <div className="quantum-stat">
-                    <div className="stat-icon">⚛️</div>
-                    <div className="stat-info">
-                      <div className="stat-value">{displayResult.superpositionStatesCollapsed}</div>
-                      <div className="stat-label">Superposition States Collapsed</div>
-                    </div>
-                  </div>
-                  <div className="quantum-stat">
-                    <div className="stat-icon">🌊</div>
-                    <div className="stat-info">
-                      <div className="stat-value">{displayResult.interferencePatternsMapped}</div>
-                      <div className="stat-label">Interference Patterns Mapped</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '16px',
+          padding: '1.5rem',
+          marginTop: '2rem',
+          textAlign: 'center'
+        }}>
+          <h3 style={{ color: '#ffffff', marginBottom: '1rem' }}>
+            Latest Decompression: {displayResult.originalFileName}
+          </h3>
+          <p style={{ color: '#a1a1aa' }}>
+            {formatFileSize(displayResult.compressedSize)} → {formatFileSize(displayResult.decompressedSize)} 
+            • {formatTime(displayResult.decompressionTime)}
+            • {(displayResult.quantumIntegrity * 100).toFixed(1)}% integrity
+          </p>
         </div>
       )}
 
-      {/* Recent Operations */}
-      {results.length > 0 && (
-        <div className="recent-operations">
-          <div className="glass-card">
-            <div className="card-header">
-              <div className="card-icon">📋</div>
-              <div>
-                <h3 className="card-title">Recent Decompressions</h3>
-                <p className="card-subtitle">Last {Math.min(results.length, 5)} operations</p>
-              </div>
-            </div>
-
-            <div className="operations-list">
-              {results.slice(-5).reverse().map((result) => (
-                <div key={result.timestamp} className="operation-item">
-                  <div className="operation-info">
-                    <div className="operation-name">{result.originalFileName}</div>
-                    <div className="operation-details">
-                      {formatFileSize(result.compressedSize)} → {formatFileSize(result.decompressedSize)}
-                      • {formatTime(result.decompressionTime)}
-                      • {(result.quantumIntegrity * 100).toFixed(1)}% integrity
-                    </div>
-                  </div>
-                  <div className="operation-status">
-                    <div className="status-indicator success">✓</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+      {results.length === 0 && (
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '16px',
+          padding: '2rem',
+          textAlign: 'center',
+          marginTop: '2rem'
+        }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📦</div>
+          <h3 style={{ color: '#ffffff', marginBottom: '0.5rem' }}>No Decompressions Yet</h3>
+          <p style={{ color: '#a1a1aa' }}>
+            Upload a .qf file to see decompression metrics here
+          </p>
         </div>
       )}
 

@@ -1,3 +1,4 @@
+import { PerformanceProfiler } from './PerformanceProfiler';
 import { QuantumConfig } from '../models/QuantumConfig';
 import { CompressedQuantumData } from '../models/CompressedQuantumData';
 import { QuantumMetrics } from '../models/QuantumMetrics';
@@ -12,6 +13,7 @@ export declare class QuantumCompressionEngine {
     private _interferenceOptimizer;
     private _config;
     private _metrics;
+    private _profiler;
     constructor(config?: QuantumConfig);
     /**
      * Get current configuration
@@ -68,22 +70,89 @@ export declare class QuantumCompressionEngine {
      */
     generatePerformanceReport(): string;
     /**
+     * Get performance profiler for detailed analysis
+     */
+    getProfiler(): PerformanceProfiler;
+    /**
+     * Generate comprehensive performance analysis
+     */
+    generatePerformanceAnalysis(): string;
+    /**
+     * Optimize quantum parameters based on data characteristics
+     */
+    optimizeQuantumParameters(dataSize: number, dataType?: 'text' | 'binary' | 'structured' | 'random'): QuantumConfig;
+    /**
+     * Force garbage collection and memory cleanup
+     */
+    forceMemoryCleanup(): void;
+    /**
+     * Hybrid compression strategy that combines classical and quantum algorithms
+     */
+    private hybridCompress;
+    /**
+     * Classical compression using zlib deflate
+     */
+    private classicalCompress;
+    /**
+     * Quantum optimization of already compressed data
+     */
+    private quantumOptimizeCompressed;
+    /**
+     * Find quantum-inspired patterns in compressed data
+     */
+    private findQuantumPatterns;
+    /**
+     * Apply quantum optimization to compressed data using found patterns
+     */
+    private applyQuantumOptimization;
+    /**
+     * Simple compression using run-length encoding as emergency fallback
+     */
+    private simpleCompress;
+    /**
+     * Hybrid decompression that handles different compression strategies
+     */
+    private hybridDecompress;
+    /**
+     * Classical decompression using zlib inflate
+     */
+    private classicalDecompress;
+    /**
+     * Decompress quantum-optimized data
+     */
+    private decompressQuantumOptimized;
+    /**
+     * Reverse quantum optimization patterns
+     */
+    private reverseQuantumOptimization;
+    /**
+     * Simple decompression for run-length encoded data
+     */
+    private simpleDecompress;
+    /**
+     * Clear caches in quantum processing components
+     */
+    private clearComponentCaches;
+    /**
      * Reset session statistics
      */
     resetSessionStatistics(): void;
     /**
      * Phase 1: Quantum State Preparation
      * Convert classical data into quantum state vectors with optimal chunking and phase assignment
+     * Optimized for memory efficiency and performance
      */
     private performQuantumStatePreparation;
     /**
      * Phase 2: Superposition Analysis
      * Create superposition states and analyze probability patterns
+     * Optimized for performance and memory efficiency
      */
     private performSuperpositionAnalysis;
     /**
      * Phase 3: Entanglement Detection
      * Find correlated patterns and create entanglement pairs
+     * Optimized for performance and memory efficiency
      */
     private performEntanglementDetection;
     /**
@@ -141,12 +210,21 @@ export declare class QuantumCompressionEngine {
     private initializeComponents;
     /**
      * Calculate optimal chunk size based on data size and configuration
+     * Optimized for memory efficiency and performance
      */
     private calculateOptimalChunkSize;
     /**
      * Calculate default chunk size
      */
     private calculateDefaultChunkSize;
+    /**
+     * Calculate maximum number of quantum states based on available memory
+     */
+    private calculateMaxStatesForMemory;
+    /**
+     * Perform simplified superposition analysis as fallback
+     */
+    private performSimplifiedSuperpositionAnalysis;
     /**
      * Group quantum states for superposition processing
      */

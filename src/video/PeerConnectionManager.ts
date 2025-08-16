@@ -313,6 +313,42 @@ export class PeerConnectionManager extends EventEmitter {
   }
 
   /**
+   * Replace video track (for screen sharing)
+   */
+  async replaceVideoTrack(participantId: string, newVideoTrack: MediaStreamTrack): Promise<void> {
+    const peerConnection = this.peerConnections.get(participantId);
+    if (!peerConnection) {
+      throw new WebRTCError({
+        type: 'connection-failed',
+        message: `No peer connection found for participant ${participantId}`,
+        participantId,
+        timestamp: Date.now()
+      });
+    }
+
+    try {
+      const sender = peerConnection.getSenders().find(s => 
+        s.track && s.track.kind === 'video'
+      );
+
+      if (sender) {
+        await sender.replaceTrack(newVideoTrack);
+        this.emit('video-track-replaced', { participantId, track: newVideoTrack });
+      } else {
+        throw new Error('No video sender found');
+      }
+    } catch (error) {
+      throw new WebRTCError({
+        type: 'media-access-denied',
+        message: `Failed to replace video track: ${error.message}`,
+        participantId,
+        timestamp: Date.now(),
+        details: error
+      });
+    }
+  }
+
+  /**
    * Update RTC configuration (e.g., add new STUN/TURN servers)
    */
   updateRTCConfiguration(config: RTCConfiguration): void {

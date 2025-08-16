@@ -12,9 +12,9 @@
 }
 
 .metricCard {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 1.5rem;
   display: flex;
@@ -25,7 +25,8 @@
 
 .metricCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
 .metricIcon {
@@ -62,20 +63,20 @@
 .metricValue {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #1f2937;
+  color: #ffffff;
   margin-bottom: 0.25rem;
 }
 
 .metricLabel {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #4b5563;
+  color: #a1a1aa;
   margin-bottom: 0.125rem;
 }
 
 .metricSublabel {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: #71717a;
 }
 
 .detailedMetrics {
@@ -83,11 +84,17 @@
 }
 
 .glassCard {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.glassCard:hover {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
 .cardHeader {
@@ -111,13 +118,13 @@
 .cardTitle {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #1f2937;
+  color: #ffffff;
   margin: 0;
 }
 
 .cardSubtitle {
   font-size: 0.9rem;
-  color: #6b7280;
+  color: #71717a;
   margin: 0;
 }
 
@@ -144,13 +151,13 @@
 
 .metricName {
   font-size: 0.9rem;
-  color: #6b7280;
+  color: #a1a1aa;
 }
 
 .metricItemValue {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #1f2937;
+  color: #ffffff;
 }
 
 .quantumDetails {
@@ -162,7 +169,7 @@
 .quantumDetails h4 {
   font-size: 1rem;
   font-weight: 600;
-  color: #1f2937;
+  color: #ffffff;
   margin: 0 0 1rem 0;
 }
 
@@ -179,6 +186,11 @@
   padding: 0.75rem;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.quantumStat:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .statIcon {
@@ -192,12 +204,12 @@
 .statValue {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1f2937;
+  color: #ffffff;
 }
 
 .statLabel {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: #a1a1aa;
 }
 
 .recentOperations {
@@ -222,6 +234,7 @@
 
 .operationItem:hover {
   background: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
 }
 
 .operationInfo {
@@ -231,13 +244,13 @@
 .operationName {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #1f2937;
+  color: #ffffff;
   margin-bottom: 0.25rem;
 }
 
 .operationDetails {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: #a1a1aa;
 }
 
 .operationStatus {

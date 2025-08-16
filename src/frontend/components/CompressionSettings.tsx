@@ -1,9 +1,9 @@
 import React from 'react';
-import { QuantumConfig } from '../../models/QuantumConfig';
+import { FrontendQuantumConfig } from '../types/FrontendTypes';
 
 interface CompressionSettingsProps {
-  config: QuantumConfig;
-  onChange: (config: Partial<QuantumConfig>) => void;
+  config: FrontendQuantumConfig;
+  onChange: (config: Partial<FrontendQuantumConfig>) => void;
   disabled: boolean;
 }
 
@@ -12,7 +12,7 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
   onChange,
   disabled
 }) => {
-  const handleSliderChange = (key: keyof QuantumConfig, value: number) => {
+  const handleSliderChange = (key: keyof FrontendQuantumConfig, value: number) => {
     onChange({ [key]: value });
   };
 
@@ -38,7 +38,7 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
     min: number;
     max: number;
     step?: number;
-    configKey: keyof QuantumConfig;
+    configKey: keyof FrontendQuantumConfig;
     description: string;
     unit?: string;
   }) => (

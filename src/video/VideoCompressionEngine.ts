@@ -153,6 +153,39 @@ export class VideoCompressionEngine {
   }
 
   /**
+   * Compress video buffer (for recording purposes)
+   */
+  async compressVideoBuffer(buffer: Buffer, config: VideoCompressionConfig): Promise<{
+    compressedData: Buffer;
+    compressionRatio: number;
+    originalSize: number;
+    compressedSize: number;
+  }> {
+    const startTime = performance.now();
+    
+    try {
+      // Simulate compression for recording
+      const compressionRatio = this.getSimulatedCompressionRatio(config.baseQuality);
+      const compressedSize = Math.floor(buffer.length / compressionRatio);
+      const compressedData = Buffer.alloc(compressedSize);
+      
+      // Fill with compressed data simulation
+      for (let i = 0; i < compressedSize; i++) {
+        compressedData[i] = buffer[i % buffer.length];
+      }
+      
+      return {
+        compressedData,
+        compressionRatio,
+        originalSize: buffer.length,
+        compressedSize
+      };
+    } catch (error) {
+      throw new Error(`Video buffer compression failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  /**
    * Process the next frame in the queue
    */
   private async processNextFrame(): Promise<VideoCompressionResult> {

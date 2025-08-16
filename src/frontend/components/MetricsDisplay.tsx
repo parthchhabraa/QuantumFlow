@@ -1,8 +1,8 @@
 import React from 'react';
-import { QuantumMetrics } from '../../models/QuantumMetrics';
+import { FrontendQuantumMetrics } from '../types/FrontendTypes';
 
 interface MetricsDisplayProps {
-  metrics: QuantumMetrics | null;
+  metrics: FrontendQuantumMetrics | null;
   isProcessing: boolean;
 }
 
@@ -193,7 +193,7 @@ export const MetricsDisplay: React.FC<MetricsDisplayProps> = ({
                 INTERFERENCE OPTIMIZATIONS
               </h4>
               <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#ef4444' }}>
-                {metrics.interferenceOptimizations || 0}
+                {metrics.interferencePatterns || 0}
               </div>
               <div style={{ fontSize: '0.8rem', color: '#9ca3af' }}>
                 Redundancy eliminations applied
@@ -203,7 +203,7 @@ export const MetricsDisplay: React.FC<MetricsDisplayProps> = ({
         </div>
       )}
 
-      <style jsx>{`
+      <style>{`
         @keyframes shimmer {
           0% { left: -100%; }
           100% { left: 100%; }

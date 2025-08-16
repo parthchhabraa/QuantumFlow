@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Demo - QuantumFlow</title>
+    <meta name="description" content="Try QuantumFlow's quantum-inspired compression technology with this interactive demo. Upload files and see real-time compression results.">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/animations.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="../index.html" style="text-decoration: none; color: inherit;">
+                    <span class="quantum-text">Quantum</span>
+                    <span class="compress-text">Flow</span>
+                </a>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="../index.html#features" class="nav-link">Features</a>
+                <a href="demo.html" class="nav-link active">Demo</a>
+                <a href="docs.html" class="nav-link">Docs</a>
+                <a href="api.html" class="nav-link">API</a>
+            </div>
+            <div class="nav-toggle" id="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Demo Section -->
+    <section class="demo-section">
+        <div class="particles-container" id="particles"></div>
+        <div class="container">
+            <div class="demo-header">
+                <h1>Interactive Demo</h1>
+                <p>Experience QuantumFlow in action. Upload a file and see how our quantum-inspired algorithms compress it in real-time.</p>
+            </div>
+
+            <div class="demo-container">
+                <div class="demo-card">
+                    <h2>Try QuantumFlow Compression</h2>
+                    <div class="upload-area" id="upload-area">
+                        <div class="upload-icon">📁</div>
+                        <p>Drag and drop a file here or click to browse</p>
+                        <input type="file" id="file-input" hidden>
+                        <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">
+                            Choose File
+                        </button>
+                    </div>
+
+                    <div class="file-info" id="file-info" style="display: none;">
+                        <h3>File Information</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Name:</span>
+                                <span class="info-value" id="file-name">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Size:</span>
+                                <span class="info-value" id="file-size">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Type:</span>
+                                <span class="info-value" id="file-type">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="compression-controls" id="compression-controls" style="display: none;">
+                        <h3>Compression Settings</h3>
+                        <div class="control-group">
+                            <label for="algorithm-select">Algorithm:</label>
+                            <select id="algorithm-select">
+                                <option value="quantum">Quantum Superposition</option>
+                                <option value="entanglement">Quantum Entanglement</option>
+                                <option value="interference">Quantum Interference</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label for="compression-level">Compression Level:</label>
+                            <input type="range" id="compression-level" min="1" max="10" value="7">
+                            <span id="compression-value">7</span>
+                        </div>
+                        <button class="btn btn-primary" id="compress-btn">
+                            <span class="btn-text">Compress File</span>
+                            <span class="btn-loader" style="display: none;">⚛️</span>
+                        </button>
+                    </div>
+
+                    <div class="results-section" id="results-section" style="display: none;">
+                        <h3>Compression Results</h3>
+                        <div class="results-grid">
+                            <div class="result-card">
+                                <div class="result-label">Original Size</div>
+                                <div class="result-value" id="original-size">-</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-label">Compressed Size</div>
+                                <div class="result-value" id="compressed-size">-</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-label">Compression Ratio</div>
+                                <div class="result-value quantum-gradient" id="compression-ratio">-</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-label">Space Saved</div>
+                                <div class="result-value" id="space-saved">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="download-section">
+                            <button class="btn btn-secondary" id="download-btn">
+                                Download Compressed File
+                            </button>
+                            <button class="btn btn-outline" id="reset-btn">
+                                Try Another File
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="visualization-card">
+                    <h2>Real-time Visualization</h2>
+                    <div class="quantum-visualization" id="quantum-viz">
+                        <div class="viz-placeholder">
+                            <div class="quantum-state-display">
+                                <div class="state-indicator" id="state-1">|0⟩</div>
+                                <div class="state-indicator" id="state-2">|1⟩</div>
+                                <div class="state-indicator" id="state-3">|+⟩</div>
+                                <div class="state-indicator" id="state-4">|-⟩</div>
+                            </div>
+                            <p>Upload a file to see quantum compression visualization</p>
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-display" id="metrics-display">
+                        <div class="metric">
+                            <span class="metric-label">Quantum Efficiency:</span>
+                            <span class="metric-value" id="quantum-efficiency">0%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Entanglement Pairs:</span>
+                            <span class="metric-value" id="entanglement-pairs">0</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Superposition States:</span>
+                            <span class="metric-value" id="superposition-states">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>QuantumFlow</h3>
+                    <p>Quantum-inspired compression algorithm by eliomatters leveraging quantum mechanical principles.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="docs.html">Documentation</a></li>
+                        <li><a href="api.html">API Reference</a></li>
+                        <li><a href="demo.html">Interactive Demo</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 QuantumFlow by eliomatters. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/particles.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/demo.js"></script>
+</body>
+</html>
