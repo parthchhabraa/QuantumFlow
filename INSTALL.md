@@ -32,7 +32,7 @@ This guide provides detailed installation instructions for QuantumFlow on differ
 #### macOS/Linux
 ```bash
 # Download and run the installation script
-curl -fsSL https://raw.githubusercontent.com/eliomatters/quantumflow/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/parthchhabraa/quantumflow/main/scripts/install.sh | bash
 ```
 
 #### Windows
@@ -54,7 +54,7 @@ quantumflow --version
 
 ```bash
 # Clone the repository
-git clone https://github.com/eliomatters/quantumflow.git
+git clone https://github.com/parthchhabraa/quantumflow.git
 cd quantumflow
 
 # Install dependencies
@@ -74,7 +74,7 @@ quantumflow --version
 
 ```bash
 # Clone and setup for development
-git clone https://github.com/eliomatters/quantumflow.git
+git clone https://github.com/parthchhabraa/quantumflow.git
 cd quantumflow
 npm install
 npm run build
@@ -304,14 +304,14 @@ quantumflow --version  # Should show "command not found"
 If you encounter issues during installation:
 
 1. **Check the troubleshooting section** above
-2. **Search existing issues** on [GitHub Issues](https://github.com/eliomatters/quantumflow/issues)
+2. **Search existing issues** on [GitHub Issues](https://github.com/parthchhabraa/quantumflow/issues)
 3. **Create a new issue** with:
    - Your operating system and version
    - Node.js and npm versions (`node --version`, `npm --version`)
    - Complete error messages
    - Steps you've already tried
 
-4. **Contact support** at contact@eliomatters.com
+4. **Contact support** at [hello@parthchhabra.in](mailto:hello@parthchhabra.in)
 
 ## Next Steps
 
